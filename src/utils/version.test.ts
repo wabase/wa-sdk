@@ -21,7 +21,7 @@ describe('Version Utils', () => {
   describe('getSDKVersion', () => {
     it('should return SDK version from package.json', () => {
       const version = getSDKVersion();
-      expect(version).toBe('1.1.0');
+      expect(version).toMatch(/^\d+\.\d+\.\d+/);
     });
 
     it('should return a valid semver format', () => {

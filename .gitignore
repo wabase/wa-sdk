@@ -38,3 +38,4 @@ refference-api.json
 # Temporary files
 *.tmp
 .cache/
+.npmrc
