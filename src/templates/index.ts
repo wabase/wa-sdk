@@ -239,4 +239,13 @@ export class TemplateManagementAPI {
   async deleteTemplateById(templateId: string): Promise<{ success: boolean }> {
     return this.httpClient.delete<{ success: boolean }>(templateId);
   }
+
+  /**
+   * Alias for getAllTemplates - List all templates
+   * @param params - Query parameters
+   * @returns List of templates
+   */
+  async list(params?: { fields?: string[]; limit?: number }): Promise<TemplateListResponse> {
+    return this.getAllTemplates(params);
+  }
 }

@@ -1772,6 +1772,7 @@ Apart from the specific conditions mentioned above, all other rights and restric
 - [Contributing Guide](./docs/CONTRIBUTING.md)
 - [API Verification](./docs/API_VERIFICATION.md)
 - [Project Status](./docs/PROJECT_STATUS.md)
+- [Publishing Guide](./docs/PUBLISHING.md) - How to publish and update the package
 - [Changelog](./CHANGELOG.md)
 
 **WhatsApp Resources**:

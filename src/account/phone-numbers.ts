@@ -124,4 +124,23 @@ export class PhoneNumbersAPI {
     const id = phoneNumberId || this.phoneNumberId;
     return this.httpClient.post<{ success: boolean }>(id, params);
   }
+
+  /**
+   * Alias for getPhoneNumbers - List all phone numbers in WABA
+   * @param wabaId - WhatsApp Business Account ID
+   * @param params - Optional filter parameters
+   * @returns List of phone numbers
+   */
+  async list(wabaId: string, params?: PhoneNumberFilterParams): Promise<PhoneNumbersListResponse> {
+    return this.getPhoneNumbers(wabaId, params);
+  }
+
+  /**
+   * Alias for getPhoneNumberById - Get phone number details
+   * @param phoneNumberId - Phone number ID (optional, uses client's phoneNumberId if not provided)
+   * @returns Phone number details
+   */
+  async get(phoneNumberId?: string): Promise<PhoneNumberDetails> {
+    return this.getPhoneNumberById(phoneNumberId);
+  }
 }

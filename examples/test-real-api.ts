@@ -156,9 +156,9 @@ async function testMessaging() {
       contacts: [
         {
           name: {
-            formatted_name: 'Test Contact',
-            first_name: 'Test',
-            last_name: 'Contact',
+            formattedName: 'Test Contact',
+            firstName: 'Test',
+            lastName: 'Contact',
           },
           phones: [
             {
@@ -222,11 +222,11 @@ async function testAccount() {
 
   await runTest('Account', 'Get Messaging Limit', async () => {
     const limit = await client.account.getMessagingLimit();
-    console.log(`   Current Tier: ${limit.data[0].messaging_limit_tier}`);
+    console.log(`   Current Tier: ${limit.whatsapp_business_manager_messaging_limit}`);
   });
 
   await runTest('Account', 'List Phone Numbers', async () => {
-    const phones = await client.phoneNumbers.list();
+    const phones = await client.phoneNumbers.list(config.wabaId);
     console.log(`   Found ${phones.data.length} phone number(s)`);
   });
 
@@ -250,8 +250,10 @@ async function testTemplates() {
     async () => {
       await client.messages.sendTemplate({
         to: config.testRecipient,
-        templateName: config.templateName,
-        languageCode: 'en',
+        template: {
+          name: config.templateName,
+          language: 'en_US',
+        },
       });
     },
     !config.templateName
@@ -358,8 +360,7 @@ async function testAnalytics() {
     const analytics = await client.analytics.getAnalytics({
       start: Math.floor(thirtyDaysAgo.getTime() / 1000),
       end: Math.floor(now.getTime() / 1000),
-      granularity: 'DAY',
-      metric_types: ['COST', 'CONVERSATION'],
+      granularity: 'DAILY',
     });
 
     console.log(`   Data points: ${analytics.data[0]?.data_points?.length || 0}`);

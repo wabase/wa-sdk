@@ -175,9 +175,15 @@ export async function updateBusinessProfile(
     validator.validate(updateBusinessProfileParamsSchema, params);
   }
 
+  // Build payload with messaging_product (if not already provided)
+  const payload = {
+    ...params,
+    messaging_product: params.messaging_product || 'whatsapp',
+  };
+
   const response = await client.post<UpdateBusinessProfileResponse>(
     `${phoneNumberId}/whatsapp_business_profile`,
-    params
+    payload
   );
 
   if (validator) {

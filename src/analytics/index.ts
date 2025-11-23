@@ -160,4 +160,13 @@ export class AnalyticsAPI {
 
     return this.httpClient.get<AnalyticsData>(`${this.wabaId}/analytics?${queryParams.toString()}`);
   }
+
+  /**
+   * Alias for getConversationAnalytics - Get analytics data
+   * @param params - Analytics query parameters
+   * @returns Analytics data
+   */
+  async getAnalytics(params: AnalyticsParams): Promise<AnalyticsData> {
+    return this.getConversationAnalytics(params);
+  }
 }
