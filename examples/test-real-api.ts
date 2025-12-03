@@ -10,7 +10,13 @@
  * 4. Run: npx tsx examples/test-real-api.ts
  */
 
-import 'dotenv/config';
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+dotenv.config({ path: path.join(__dirname, '.env') });
+
 import { WhatsAppClient } from '../dist/index.js';
 
 // Configuration

@@ -725,4 +725,114 @@ export class EmbeddedSignupAPI {
       `${wabaId}?fields=message_template_namespace`
     );
   }
+
+  // ============================================================================
+  // Convenience Methods for Embedded Signup Flow
+  // ============================================================================
+
+  /**
+   * Get all phone numbers from a WABA
+   * 
+   * Retrieves all phone numbers associated with a WABA. This is useful
+   * during the embedded signup flow to get the phone number ID without
+   * knowing it beforehand.
+   * 
+   * @param wabaId - WABA ID to query
+   * @returns List of phone numbers with details
+   * 
+   * @example
+   * ```typescript
+   * const phones = await client.embeddedSignup.getWABAPhoneNumbers('111111111111111');
+   * 
+   * phones.data.forEach(phone => {
+   *   console.log(`ID: ${phone.id}`);
+   *   console.log(`Number: ${phone.display_phone_number}`);
+   *   console.log(`Name: ${phone.verified_name}`);
+   *   console.log(`Quality: ${phone.quality_rating}`);
+   * });
+   * ```
+   */
+  async getWABAPhoneNumbers(wabaId: string): Promise<{
+    data: Array<{
+      id: string;
+      display_phone_number: string;
+      verified_name?: string;
+      quality_rating?: string;
+    }>;
+  }> {
+    return this.client.get<{
+      data: Array<{
+        id: string;
+        display_phone_number: string;
+        verified_name?: string;
+        quality_rating?: string;
+      }>;
+    }>(`${wabaId}/phone_numbers?fields=id,display_phone_number,verified_name,quality_rating`);
+  }
+
+  /**
+   * Get the primary (first) phone number from a WABA
+   * 
+   * Convenience method that returns the first phone number from a WABA.
+   * This is commonly used in embedded signup flow when you expect only
+   * one phone number to be registered.
+   * 
+   * @param wabaId - WABA ID to query
+   * @returns Primary phone number details
+   * @throws Error if no phone numbers found
+   * 
+   * @example
+   * ```typescript
+   * const phone = await client.embeddedSignup.getPrimaryPhoneNumber('111111111111111');
+   * 
+   * console.log('Phone Number ID:', phone.phoneNumberId);
+   * console.log('Phone Number:', phone.phoneNumber);
+   * console.log('Display Name:', phone.verifiedName);
+   * ```
+   */
+  async getPrimaryPhoneNumber(wabaId: string): Promise<{
+    phoneNumberId: string;
+    phoneNumber: string;
+    verifiedName?: string;
+    qualityRating?: string;
+  }> {
+    const response = await this.getWABAPhoneNumbers(wabaId);
+    
+    if (!response.data || response.data.length === 0) {
+      throw new Error(`No phone numbers found for WABA ${wabaId}`);
+    }
+
+    const primary = response.data[0];
+    return {
+      phoneNumberId: primary.id,
+      phoneNumber: primary.display_phone_number,
+      verifiedName: primary.verified_name,
+      qualityRating: primary.quality_rating,
+    };
+  }
+
+  /**
+   * Extract WABA IDs from debug token response
+   * 
+   * Convenience method to extract WABA IDs from the granular_scopes
+   * returned by debugToken.
+   * 
+   * @param debugResponse - Response from debugToken
+   * @returns Array of WABA IDs, or empty array if none found
+   * 
+   * @example
+   * ```typescript
+   * const debugInfo = await client.embeddedSignup.debugToken(businessToken);
+   * const wabaIds = client.embeddedSignup.extractWABAIds(debugInfo);
+   * 
+   * if (wabaIds.length > 0) {
+   *   const primaryPhone = await client.embeddedSignup.getPrimaryPhoneNumber(wabaIds[0]);
+   * }
+   * ```
+   */
+  extractWABAIds(debugResponse: DebugTokenResponse): string[] {
+    return debugResponse.data.granular_scopes
+      ?.find(s => s.scope === 'whatsapp_business_management')
+      ?.target_ids || [];
+  }
 }

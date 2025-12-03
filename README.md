@@ -5,7 +5,7 @@
 [![npm version](https://img.shields.io/npm/v/@wazapin/wa-sdk.svg)](https://www.npmjs.com/package/@wazapin/wa-sdk)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3+-blue.svg)](https://www.typescriptlang.org/)
-[![Test Coverage](https://img.shields.io/badge/tests-491%20passing-brightgreen.svg)](./coverage)
+[![Test Coverage](https://img.shields.io/badge/tests-521%20passing-brightgreen.svg)](./coverage)
 
 A modern, type-safe TypeScript SDK for the WhatsApp Business Cloud API. Built with developer experience in mind, featuring full TypeScript support, runtime validation, automatic retries, and cross-platform compatibility.
 
@@ -17,7 +17,7 @@ A modern, type-safe TypeScript SDK for the WhatsApp Business Cloud API. Built wi
 - **Cross-Platform** - Works in Node.js, Deno, Bun, and browsers
 - **Tree-Shakeable** - Pure ESM modules for optimal bundle size
 - **Complete API Coverage** - All message types, media, webhooks, and more
-- **Well Tested** - 491 comprehensive unit tests (100% implementation coverage)
+- **Well Tested** - 521 comprehensive unit tests (100% implementation coverage)
 - **Framework Agnostic** - No dependencies on specific frameworks
 - **Secure** - Built-in webhook signature verification
 - **Great DX** - Intuitive API with clear error messages
@@ -636,9 +636,160 @@ console.log('MIME Type:', downloadResponse.mimeType);
 
 ## 🚀 Embedded Signup
 
-Onboard businesses to WhatsApp Cloud API using the Embedded Signup flow:
+Onboard businesses to WhatsApp Cloud API using the Embedded Signup flow.
 
-### Complete Onboarding Flow
+### Quick Start: Complete Onboarding in 3 Steps
+
+The SDK now provides high-level helpers that reduce 30+ lines of manual code to just a few lines:
+
+```typescript
+import { OAuthHelper, EmbeddedSignupFlow } from '@wazapin/wa-sdk';
+
+// Step 1: Generate signup URL (frontend/API)
+const oauth = new OAuthHelper();
+const { url, state } = oauth.generateSignupUrl({
+  appId: 'YOUR_APP_ID',
+  configId: 'YOUR_CONFIG_ID',
+  redirectUri: 'https://example.com/callback',
+});
+
+// Store state for CSRF verification, then redirect user to `url`
+
+// Step 2: Handle OAuth callback (backend)
+const flow = new EmbeddedSignupFlow({
+  systemUserToken: 'YOUR_SYSTEM_USER_TOKEN',
+  // IMPORTANT: For Cloudflare Workers, pass fetch.bind(globalThis)
+  fetch: fetch.bind(globalThis),
+});
+
+const result = await flow.complete({
+  code: 'AUTH_CODE_FROM_CALLBACK',
+  state: 'CSRF_STATE',
+  appId: 'YOUR_APP_ID',
+  appSecret: 'YOUR_APP_SECRET',
+  redirectUri: 'https://example.com/callback',
+  options: {
+    autoSubscribeWebhooks: true,  // Auto-subscribe to WABA webhooks
+    autoRegisterPhone: true,       // Auto-register phone with 2FA PIN
+  },
+});
+
+// Step 3: Use the credentials!
+console.log('WABA ID:', result.wabaId);
+console.log('Phone Number ID:', result.phoneNumberId);
+console.log('Phone Number:', result.phoneNumber);
+console.log('Display Name:', result.displayName);
+console.log('PIN:', result.pin); // Save this securely!
+```
+
+### OAuth Helper Methods
+
+```typescript
+import { OAuthHelper, generateSignupUrl, parseCallbackUrl } from '@wazapin/wa-sdk';
+
+const oauth = new OAuthHelper();
+
+// Generate embedded signup URL
+const { url, state } = oauth.generateSignupUrl({
+  appId: 'YOUR_APP_ID',
+  configId: 'YOUR_CONFIG_ID',
+  redirectUri: 'https://example.com/callback',
+  // Optional:
+  apiVersion: 'v21.0',
+  featureType: 'whatsapp_business_app_onboarding',
+});
+
+// Generate basic OAuth URL (without embedded signup extras)
+const basicOAuth = oauth.generateBasicOAuthUrl({
+  appId: 'YOUR_APP_ID',
+  redirectUri: 'https://example.com/callback',
+  scopes: ['whatsapp_business_management', 'whatsapp_business_messaging'],
+});
+
+// Parse callback URL
+const callback = oauth.parseCallbackUrl('https://example.com/callback?code=xxx&state=yyy');
+console.log(callback.code, callback.state);
+
+// Exchange code for token
+const { accessToken } = await oauth.exchangeCodeForToken({
+  code: 'AUTH_CODE',
+  appId: 'YOUR_APP_ID',
+  appSecret: 'YOUR_APP_SECRET',
+  redirectUri: 'https://example.com/callback',
+});
+
+// Get WABA IDs from token
+const wabaIds = await oauth.getWABAIds(accessToken, 'SYSTEM_USER_TOKEN');
+```
+
+### Cloudflare Workers Compatibility
+
+**IMPORTANT:** When using in Cloudflare Workers, you MUST pass `fetch.bind(globalThis)` to avoid "Illegal invocation" errors:
+
+```typescript
+// Cloudflare Workers - REQUIRED
+const flow = new EmbeddedSignupFlow({
+  systemUserToken: 'YOUR_SYSTEM_USER_TOKEN',
+  fetch: fetch.bind(globalThis), // Required for CF Workers!
+});
+
+const oauth = new OAuthHelper({
+  fetch: fetch.bind(globalThis), // Required for CF Workers!
+});
+
+// Also for individual functions
+const { accessToken } = await exchangeCodeForToken({
+  code,
+  appId,
+  appSecret,
+  redirectUri,
+  fetch: fetch.bind(globalThis), // Required for CF Workers!
+});
+```
+
+This is because Cloudflare Workers restricts the global `fetch` function in certain contexts.
+
+### Onboarding Flow Options
+
+```typescript
+const result = await flow.complete({
+  code: 'AUTH_CODE',
+  state: 'CSRF_STATE',
+  appId: 'YOUR_APP_ID',
+  appSecret: 'YOUR_APP_SECRET',
+  redirectUri: 'https://example.com/callback',
+  options: {
+    // Auto-subscribe to webhooks (default: true)
+    autoSubscribeWebhooks: true,
+    
+    // Auto-register phone with 2-step verification (default: true)
+    autoRegisterPhone: true,
+    
+    // Custom 6-digit PIN (auto-generated if not provided)
+    pin: '123456',
+    
+    // Override webhook URL for this WABA
+    webhookOverrideUrl: 'https://custom.example.com/webhook',
+    webhookVerifyToken: 'my_verify_token',
+  },
+});
+
+// Result includes:
+result.wabaId;              // WhatsApp Business Account ID
+result.phoneNumberId;       // Phone Number ID for API calls
+result.phoneNumber;         // Display phone number
+result.displayName;         // Verified business name
+result.qualityRating;       // Phone quality rating
+result.accountReviewStatus; // WABA review status
+result.businessToken;       // Short-lived business token
+result.pin;                 // 2FA PIN (if autoRegisterPhone)
+result.webhooksSubscribed;  // Whether webhooks were subscribed
+result.phoneRegistered;     // Whether phone was registered
+```
+
+### Manual Step-by-Step Flow
+
+For more control, you can use individual methods:
 
 ```typescript
 import { WhatsAppClient } from '@wazapin/wa-sdk';
@@ -650,43 +801,55 @@ const client = new WhatsAppClient({
 
 // Step 1: Debug OAuth token from signup flow
 const tokenInfo = await client.embeddedSignup.debugToken(oauthToken);
-const wabaIds = tokenInfo.data.granular_scopes
-  .find(scope => scope.scope === 'whatsapp_business_management')
-  ?.target_ids || [];
-
+const wabaIds = client.embeddedSignup.extractWABAIds(tokenInfo);
 console.log('Shared WABAs:', wabaIds);
 
-// Step 2: Get WABA details
+// Step 2: Get phone numbers from WABA (new convenience method!)
+const phones = await client.embeddedSignup.getWABAPhoneNumbers(wabaIds[0]);
+// Or get just the primary phone:
+const primary = await client.embeddedSignup.getPrimaryPhoneNumber(wabaIds[0]);
+console.log('Phone ID:', primary.phoneNumberId);
+
+// Step 3: Subscribe to webhooks
+await client.embeddedSignup.subscribeToWABA(wabaIds[0]);
+
+// Step 4: Register phone (requires business token)
+const phoneClient = new WhatsAppClient({
+  phoneNumberId: primary.phoneNumberId,
+  accessToken: businessToken,
+});
+await phoneClient.registration.registerPhone({
+  messaging_product: 'whatsapp',
+  pin: '123456',
+});
+
+// Step 5: Get WABA details
 const wabas = await client.embeddedSignup.listSharedWABAs(businessId);
 wabas.data.forEach(waba => {
   console.log(`WABA: ${waba.name} (${waba.id})`);
   console.log(`Currency: ${waba.currency}`);
 });
 
-// Step 3: Add system user with permissions
+// Step 6: Add system user with permissions
 await client.embeddedSignup.addSystemUser(wabaId, {
   user: systemUserId,
   tasks: ['MANAGE'] // or ['DEVELOP'] or both
 });
 
-// Step 4: Share credit line for billing
+// Step 7: Share credit line for billing
 const allocation = await client.embeddedSignup.attachCreditLine(creditLineId, {
   waba_id: wabaId,
   waba_currency: 'USD'
 });
 console.log('Allocation Config ID:', allocation.allocation_config_id);
 
-// Step 5: Verify credit sharing
+// Step 8: Verify credit sharing
 const record = await client.embeddedSignup.verifyCreditSharing(
   allocation.allocation_config_id
 );
 if (record.receiving_credential?.id) {
   console.log('Credit successfully shared');
 }
-
-// Step 6: Subscribe to webhooks
-await client.embeddedSignup.subscribeToWABA(wabaId);
-console.log('Subscribed to WABA webhooks');
 ```
 
 ### Filter and Sort WABAs

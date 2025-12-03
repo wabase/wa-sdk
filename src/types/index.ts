@@ -281,3 +281,21 @@ export type {
   CreateFlowTemplateParams,
   SendFlowTemplateParams,
 } from './flows.js';
+
+// Embedded Signup Session types (for postMessage events)
+export type {
+  EmbeddedSignupSessionEvent,
+  EmbeddedSignupEventType,
+  EmbeddedSignupSuccessData,
+  EmbeddedSignupCancelData,
+  EmbeddedSignupErrorData,
+  EmbeddedSignupStep,
+  FBLoginResponse,
+  FBLoginOptions,
+} from './embedded-signup-session.js';
+
+export {
+  isSuccessData,
+  isCancelData,
+  isErrorData,
+} from './embedded-signup-session.js';
