@@ -29,7 +29,10 @@ export class HTTPClient {
     this.apiVersion = config.apiVersion || 'v18.0';
     this.accessToken = config.accessToken;
     this.timeout = config.timeout || 30000;
-    this.fetchImpl = config.fetch || globalThis.fetch;
+    
+    // Bind fetch to prevent "Illegal invocation" errors in environments like Cloudflare Workers
+    const fetchFn = config.fetch || globalThis.fetch;
+    this.fetchImpl = fetchFn.bind(globalThis);
 
     // Initialize SDK metadata
     const metadata = getSDKMetadata();
