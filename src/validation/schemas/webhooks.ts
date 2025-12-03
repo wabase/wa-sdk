@@ -341,12 +341,20 @@ export const smbAppStateSyncWebhookValueSchema = z.object({
 export const smbMessageEchoesWebhookValueSchema = z.object({
   messagingProduct: z.literal('whatsapp'),
   metadata: webhookMetadataSchema,
-  messages: z.array(z.object({
+  message_echoes: z.array(z.object({
     id: z.string(),
     from: z.string(),
     to: z.string(),
     timestamp: z.string(),
     type: z.string(),
+    text: z.object({ body: z.string() }).optional(),
+    image: webhookMediaSchema.optional(),
+    video: webhookMediaSchema.optional(),
+    audio: webhookMediaSchema.optional(),
+    document: webhookMediaSchema.optional(),
+    sticker: webhookMediaSchema.optional(),
+    location: webhookLocationSchema.optional(),
+    contacts: z.array(webhookContactSchema).optional(),
   }).passthrough()).optional(),
 });
 

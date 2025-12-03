@@ -452,12 +452,20 @@ export interface SmbAppStateSyncWebhookValue {
 export interface SmbMessageEchoesWebhookValue {
   messagingProduct: 'whatsapp';
   metadata: WebhookMetadata;
-  messages?: Array<{
+  message_echoes?: Array<{
     id: string;
     from: string;
     to: string;
     timestamp: string;
     type: string;
+    text?: { body: string };
+    image?: WebhookMedia;
+    video?: WebhookMedia;
+    audio?: WebhookMedia;
+    document?: WebhookMedia;
+    sticker?: WebhookMedia;
+    location?: WebhookLocation;
+    contacts?: WebhookContact[];
     [key: string]: unknown;
   }>;
 }
