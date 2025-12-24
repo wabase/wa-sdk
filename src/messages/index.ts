@@ -2,11 +2,12 @@
  * Message sending module exports
  */
 
-export { sendText } from './text.js';
-export { sendImage, sendVideo, sendAudio, sendDocument, sendSticker } from './media.js';
-export { sendInteractiveButtons, sendInteractiveList, sendInteractiveCarousel } from './interactive.js';
-export { sendTemplate } from './template.js';
-export { sendLocation } from './location.js';
 export { sendContact } from './contact.js';
+export { sendInteractiveButtons, sendInteractiveCarousel, sendInteractiveList } from './interactive.js';
+export { sendLocation } from './location.js';
+export { sendAudio, sendDocument, sendImage, sendSticker, sendVideo } from './media.js';
 export { sendReaction } from './reaction.js';
-export { markAsRead } from './read.js';
+export { markAsRead, markAsReadWithTyping } from './read.js';
+export { sendTemplate } from './template.js';
+export { sendText } from './text.js';
+

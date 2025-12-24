@@ -2,87 +2,87 @@
  * Main WhatsApp Client class
  */
 
+import type {
+    BusinessProfileResponse,
+    ConfigureConversationalAutomationParams,
+    ConversationalAutomationResponse,
+    MessagingLimitResponse,
+    UpdateBusinessProfileParams,
+    UpdateBusinessProfileResponse,
+} from '../types/account.js';
 import type { WhatsAppClientConfig } from '../types/config.js';
 import type {
-  SendTextParams,
-  SendImageParams,
-  SendVideoParams,
-  SendAudioParams,
-  SendDocumentParams,
-  SendStickerParams,
-  SendLocationParams,
-  SendContactParams,
-  SendReactionParams,
-  SendInteractiveButtonsParams,
-  SendInteractiveListParams,
-  SendInteractiveCarouselParams,
-  SendInteractiveCTAParams,
-  SendTemplateParams,
+    SendAudioParams,
+    SendContactParams,
+    SendDocumentParams,
+    SendImageParams,
+    SendInteractiveButtonsParams,
+    SendInteractiveCarouselParams,
+    SendInteractiveCTAParams,
+    SendInteractiveListParams,
+    SendLocationParams,
+    SendReactionParams,
+    SendStickerParams,
+    SendTemplateParams,
+    SendTextParams,
+    SendVideoParams,
 } from '../types/messages.js';
 import type {
-  MessageResponse,
-  SuccessResponse,
-  MediaUploadResponse,
-  MediaDownloadResponse,
-  MediaUrlResponse,
+    MediaDownloadResponse,
+    MediaUploadResponse,
+    MediaUrlResponse,
+    MessageResponse,
+    SuccessResponse,
 } from '../types/responses.js';
-import type {
-  MessagingLimitResponse,
-  BusinessProfileResponse,
-  UpdateBusinessProfileParams,
-  UpdateBusinessProfileResponse,
-  ConfigureConversationalAutomationParams,
-  ConversationalAutomationResponse,
-} from '../types/account.js';
 import type { WebhookEvent } from '../types/webhooks.js';
 
-import { HTTPClient } from './http.js';
-import { Validator } from '../validation/validator.js';
-import { withRetry } from '../utils/retry.js';
 import { WazapinLogger } from '../utils/logger.js';
+import { withRetry } from '../utils/retry.js';
+import { Validator } from '../validation/validator.js';
+import { HTTPClient } from './http.js';
 
 // Import new API classes
-import { PhoneNumbersAPI } from '../account/phone-numbers.js';
-import { RegistrationAPI } from '../account/registration.js';
-import { WABAManagementAPI } from '../account/waba.js';
-import { QRCodeAPI } from '../account/qr-codes.js';
-import { CommerceSettingsAPI } from '../account/commerce-settings.js';
 import { BlockUsersAPI } from '../account/block-users.js';
 import { BusinessAccountsAPI } from '../account/business-accounts.js';
-import { TwoStepVerificationAPI } from '../account/two-step-verification.js';
-import { SharedWABAsAPI } from '../account/shared-wabas.js';
+import { CommerceSettingsAPI } from '../account/commerce-settings.js';
 import { EmbeddedSignupAPI } from '../account/embedded-signup.js';
-import { TemplateManagementAPI } from '../templates/index.js';
+import { PhoneNumbersAPI } from '../account/phone-numbers.js';
+import { QRCodeAPI } from '../account/qr-codes.js';
+import { RegistrationAPI } from '../account/registration.js';
+import { SharedWABAsAPI } from '../account/shared-wabas.js';
+import { TwoStepVerificationAPI } from '../account/two-step-verification.js';
+import { WABAManagementAPI } from '../account/waba.js';
+import { AnalyticsAPI } from '../analytics/index.js';
 import { CommerceMessagesAPI } from '../messages/commerce.js';
 import { TypingIndicatorAPI } from '../messages/typing.js';
-import { WebhookSubscriptionAPI } from '../webhooks/subscribe.js';
-import { AnalyticsAPI } from '../analytics/index.js';
 import { FlowsAPI } from '../messaging/flows.js';
+import { TemplateManagementAPI } from '../templates/index.js';
+import { WebhookSubscriptionAPI } from '../webhooks/subscribe.js';
 
 // Import message functions
-import { sendText } from '../messages/text.js';
-import {
-  sendImage,
-  sendVideo,
-  sendAudio,
-  sendDocument,
-  sendSticker,
-} from '../messages/media.js';
-import {
-  sendInteractiveButtons,
-  sendInteractiveList,
-  sendInteractiveCarousel,
-  sendInteractiveCTA,
-} from '../messages/interactive.js';
-import { sendTemplate } from '../messages/template.js';
-import { sendLocation } from '../messages/location.js';
 import { sendContact } from '../messages/contact.js';
+import {
+    sendInteractiveButtons,
+    sendInteractiveCarousel,
+    sendInteractiveCTA,
+    sendInteractiveList,
+} from '../messages/interactive.js';
+import { sendLocation } from '../messages/location.js';
+import {
+    sendAudio,
+    sendDocument,
+    sendImage,
+    sendSticker,
+    sendVideo,
+} from '../messages/media.js';
 import { sendReaction } from '../messages/reaction.js';
-import { markAsRead } from '../messages/read.js';
+import { markAsRead, markAsReadWithTyping } from '../messages/read.js';
+import { sendTemplate } from '../messages/template.js';
+import { sendText } from '../messages/text.js';
 
 // Import media functions
-import { uploadMedia } from '../media/upload.js';
 import { downloadMedia, getMediaUrl } from '../media/download.js';
+import { uploadMedia } from '../media/upload.js';
 
 // Import webhook functions
 import { parseWebhook } from '../webhooks/parser.js';
@@ -90,11 +90,11 @@ import { verifyWebhookSignature } from '../webhooks/verifier.js';
 
 // Import account functions
 import {
-  getMessagingLimit,
-  getBusinessProfile,
-  updateBusinessProfile,
-  configureConversationalAutomation,
-  getConversationalAutomation,
+    configureConversationalAutomation,
+    getBusinessProfile,
+    getConversationalAutomation,
+    getMessagingLimit,
+    updateBusinessProfile,
 } from '../account/index.js';
 
 /**
@@ -130,6 +130,7 @@ export class WhatsAppClient {
     sendTemplate: (params: SendTemplateParams) => Promise<MessageResponse>;
     sendInteractiveCTA: (params: SendInteractiveCTAParams) => Promise<MessageResponse>;
     markAsRead: (messageId: string) => Promise<SuccessResponse>;
+    markAsReadWithTyping: (messageId: string, showTyping?: boolean) => Promise<SuccessResponse>;
   };
 
   /**
@@ -326,6 +327,10 @@ export class WhatsAppClient {
         ),
       markAsRead: (messageId) =>
         this.withRetryWrapper(() => markAsRead(this.client, this.phoneNumberId, messageId)),
+      markAsReadWithTyping: (messageId, showTyping = false) =>
+        this.withRetryWrapper(() =>
+          markAsReadWithTyping(this.client, this.phoneNumberId, messageId, showTyping)
+        ),
     };
 
     // Initialize media namespace
