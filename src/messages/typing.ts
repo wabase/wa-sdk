@@ -1,32 +1,34 @@
 /**
- * Typing Indicators
+ * Typing Indicators (API v24.0)
  * Send typing indicators to show activity status
  * @module messages/typing
  */
 
-import type { HTTPClient } from '../client/http.js';
+import type { HTTPClient } from "../client/http.js";
 
 /**
- * Typing action type
+ * Typing state for v24.0 API
  */
-export type TypingAction = 'typing' | 'stop_typing';
+export type TypingState = "composing";
 
 /**
  * Parameters for sending typing indicator
  */
 export interface SendTypingIndicatorParams {
   /**
-   * Recipient phone number
+   * Recipient phone number (without + prefix)
+   * Example: "628123456789" or "14155551234"
    */
   to: string;
   /**
-   * Typing action: "typing" to show typing, "stop_typing" to stop
+   * Typing state: "composing" only
+   * (Fire-and-forget: auto-hides after 15 seconds)
    */
-  action: TypingAction;
+  state: TypingState;
 }
 
 /**
- * Typing Indicator API
+ * Typing Indicator API (v24.0)
  * Provides methods to send typing indicators
  */
 export class TypingIndicatorAPI {
@@ -36,28 +38,29 @@ export class TypingIndicatorAPI {
   ) {}
 
   /**
-   * Send typing indicator
-   * 
-   * Sends a typing indicator to show that you are typing a message.
-   * Use "typing" to show the typing indicator, and "stop_typing" to remove it.
-   * 
-   * Note: Typing indicators automatically disappear after 30 seconds.
-   * 
+   * Send typing indicator (v24.0 format)
+   *
+   * Sends a typing indicator using the new v24.0 API format.
+   * The indicator automatically disappears after 15 seconds.
+   * No need to send "stop" - fire-and-forget pattern.
+   *
    * @param params - Typing indicator parameters
    * @returns Success response
-   * @see https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-messages#typing-indicators
+   * @see https://developers.facebook.com/docs/whatsapp/business-messaging/whatsapp-typing-indicators/
    */
   async sendTypingIndicator(
     params: SendTypingIndicatorParams,
   ): Promise<{ success: boolean }> {
-    return this.httpClient.post<{ success: boolean }>(`${this.phoneNumberId}/messages`, {
-      messaging_product: 'whatsapp',
-      recipient_type: 'individual',
+    await this.httpClient.post<void>(`${this.phoneNumberId}/messages`, {
+      messaging_product: "whatsapp",
+      recipient_type: "individual",
       to: params.to,
-      type: 'chat_state',
-      chat_state: {
-        action: params.action,
+      type: "typing",
+      typing: {
+        state: params.state,
       },
     });
+
+    return { success: true };
   }
 }
