@@ -2,14 +2,10 @@
  * HTTP client for WhatsApp Cloud API
  */
 
-import type { WhatsAppClientConfig } from '../types/config.js';
-import {
-  APIError,
-  NetworkError,
-  RateLimitError,
-} from '../types/errors.js';
-import { getSDKMetadata } from '../utils/version.js';
-import type { WazapinLogger } from '../utils/logger.js';
+import type { WhatsAppClientConfig } from "../types/config.js";
+import { APIError, NetworkError, RateLimitError } from "../types/errors.js";
+import { getSDKMetadata } from "../utils/version.js";
+import type { WazapinLogger } from "../utils/logger.js";
 
 /**
  * HTTP client for making requests to WhatsApp Cloud API
@@ -25,11 +21,11 @@ export class HTTPClient {
   private readonly logger: WazapinLogger;
 
   constructor(config: WhatsAppClientConfig, logger: WazapinLogger) {
-    this.baseUrl = config.baseUrl || 'https://graph.facebook.com';
-    this.apiVersion = config.apiVersion || 'v18.0';
+    this.baseUrl = config.baseUrl || "https://graph.facebook.com";
+    this.apiVersion = config.apiVersion || "v24.0";
     this.accessToken = config.accessToken;
     this.timeout = config.timeout || 30000;
-    
+
     // Bind fetch to prevent "Illegal invocation" errors in environments like Cloudflare Workers
     const fetchFn = config.fetch || globalThis.fetch;
     this.fetchImpl = fetchFn.bind(globalThis);
@@ -40,7 +36,7 @@ export class HTTPClient {
     this.userAgent = metadata.userAgent;
     this.logger = logger;
 
-    this.logger.debug('HTTPClient initialized', {
+    this.logger.debug("HTTPClient initialized", {
       baseUrl: this.baseUrl,
       apiVersion: this.apiVersion,
       sdkVersion: this.sdkVersion,
@@ -53,7 +49,7 @@ export class HTTPClient {
   async request<T>(
     method: string,
     endpoint: string,
-    body?: unknown
+    body?: unknown,
   ): Promise<T> {
     const url = `${this.baseUrl}/${this.apiVersion}/${endpoint}`;
 
@@ -68,9 +64,9 @@ export class HTTPClient {
         method,
         headers: {
           Authorization: `Bearer ${this.accessToken}`,
-          'Content-Type': 'application/json',
-          'User-Agent': this.userAgent,
-          'Wazapin-SDK-Version': this.sdkVersion,
+          "Content-Type": "application/json",
+          "User-Agent": this.userAgent,
+          "Wazapin-SDK-Version": this.sdkVersion,
         },
         body: body ? JSON.stringify(body) : undefined,
         signal: controller.signal,
@@ -83,7 +79,9 @@ export class HTTPClient {
       }
 
       const data = (await response.json()) as T;
-      this.logger.debug(`${method} ${endpoint} - Success`, { status: response.status });
+      this.logger.debug(`${method} ${endpoint} - Success`, {
+        status: response.status,
+      });
 
       return data;
     } catch (error) {
@@ -91,16 +89,16 @@ export class HTTPClient {
       this.logger.error(`${method} ${endpoint} - Failed`, { error });
 
       // Handle abort/timeout errors
-      if (error instanceof Error && error.name === 'AbortError') {
+      if (error instanceof Error && error.name === "AbortError") {
         throw new NetworkError(
           `Request timeout after ${this.timeout}ms`,
-          error
+          error,
         );
       }
 
       // Handle network errors
       if (error instanceof TypeError) {
-        throw new NetworkError('Network request failed', error);
+        throw new NetworkError("Network request failed", error);
       }
 
       // Re-throw API errors
@@ -114,8 +112,8 @@ export class HTTPClient {
 
       // Unknown error
       throw new NetworkError(
-        'An unexpected error occurred',
-        error instanceof Error ? error : undefined
+        "An unexpected error occurred",
+        error instanceof Error ? error : undefined,
       );
     }
   }
@@ -148,22 +146,29 @@ export class HTTPClient {
     }
 
     const error = errorData.error || {};
-    const message = error.message || `HTTP ${response.status}: ${response.statusText}`;
+    const message =
+      error.message || `HTTP ${response.status}: ${response.statusText}`;
     const errorCode = error.code || 0;
     const errorSubcode = error.error_subcode;
     const fbtraceId = error.fbtrace_id;
 
     // Handle rate limit errors
     if (response.status === 429) {
-      const retryAfter = response.headers.get('retry-after');
+      const retryAfter = response.headers.get("retry-after");
       throw new RateLimitError(
         message,
-        retryAfter ? parseInt(retryAfter, 10) : undefined
+        retryAfter ? parseInt(retryAfter, 10) : undefined,
       );
     }
 
     // Handle other API errors
-    throw new APIError(message, response.status, errorCode, errorSubcode, fbtraceId);
+    throw new APIError(
+      message,
+      response.status,
+      errorCode,
+      errorSubcode,
+      fbtraceId,
+    );
   }
 
   /**
@@ -171,10 +176,10 @@ export class HTTPClient {
    */
   async get<T>(
     endpoint: string,
-    params?: Record<string, string | number | boolean>
+    params?: Record<string, string | number | boolean>,
   ): Promise<T> {
     let url = endpoint;
-    
+
     if (params && Object.keys(params).length > 0) {
       const searchParams = new URLSearchParams();
       for (const [key, value] of Object.entries(params)) {
@@ -182,22 +187,22 @@ export class HTTPClient {
       }
       url = `${endpoint}?${searchParams.toString()}`;
     }
-    
-    return this.request<T>('GET', url);
+
+    return this.request<T>("GET", url);
   }
 
   /**
    * Make a POST request
    */
   async post<T>(endpoint: string, body?: unknown): Promise<T> {
-    return this.request<T>('POST', endpoint, body);
+    return this.request<T>("POST", endpoint, body);
   }
 
   /**
    * Make a DELETE request
    */
   async delete<T>(endpoint: string): Promise<T> {
-    return this.request<T>('DELETE', endpoint);
+    return this.request<T>("DELETE", endpoint);
   }
 
   /**
@@ -214,11 +219,11 @@ export class HTTPClient {
       const timeoutId = setTimeout(() => controller.abort(), this.timeout);
 
       const response = await this.fetchImpl(url, {
-        method: 'POST',
+        method: "POST",
         headers: {
           Authorization: `Bearer ${this.accessToken}`,
-          'User-Agent': this.userAgent,
-          'Wazapin-SDK-Version': this.sdkVersion,
+          "User-Agent": this.userAgent,
+          "Wazapin-SDK-Version": this.sdkVersion,
           // Note: Do NOT set Content-Type for FormData
           // Browser/Node will set it automatically with boundary
         },
@@ -241,15 +246,15 @@ export class HTTPClient {
     } catch (error) {
       this.logger.error(`POST (multipart) ${endpoint} - Failed`, { error });
 
-      if (error instanceof Error && error.name === 'AbortError') {
+      if (error instanceof Error && error.name === "AbortError") {
         throw new NetworkError(
           `Request timeout after ${this.timeout}ms`,
-          error
+          error,
         );
       }
 
       if (error instanceof TypeError) {
-        throw new NetworkError('Network request failed', error);
+        throw new NetworkError("Network request failed", error);
       }
 
       if (
@@ -261,8 +266,8 @@ export class HTTPClient {
       }
 
       throw new NetworkError(
-        'An unexpected error occurred',
-        error instanceof Error ? error : undefined
+        "An unexpected error occurred",
+        error instanceof Error ? error : undefined,
       );
     }
   }
