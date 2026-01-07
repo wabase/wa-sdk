@@ -105,7 +105,7 @@ export interface WebhookMessage {
 
 export interface WebhookStatus {
   id: string;
-  status: "sent" | "delivered" | "read" | "failed";
+  status: "sent" | "delivered" | "read" | "played" | "failed";
   timestamp: string;
   recipientId: string;
   conversation?: {

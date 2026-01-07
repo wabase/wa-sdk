@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import type { WebhookMedia, WebhookMessage } from "./webhooks.js";
+import type { WebhookMedia, WebhookMessage, WebhookStatus } from "./webhooks.js";
 
 describe("WebhookMedia types", () => {
   it("should accept media with URL (v23.0+)", () => {
@@ -88,5 +88,36 @@ describe("Voice transcription types", () => {
     };
     expect(message.audio?.voice).toBeUndefined();
     expect(message.audio?.text).toBeUndefined();
+  });
+});
+
+describe("Message status types", () => {
+  it("should accept 'played' status for media messages", () => {
+    const status: WebhookStatus = {
+      id: "msg123",
+      status: "played",
+      timestamp: "1704556800",
+      recipientId: "1234567890",
+    };
+    expect(status.status).toBe("played");
+  });
+
+  it("should accept all status values", () => {
+    const statuses: Array<WebhookStatus["status"]> = [
+      "sent",
+      "delivered",
+      "read",
+      "played",
+      "failed",
+    ];
+    statuses.forEach((s) => {
+      const status: WebhookStatus = {
+        id: "msg123",
+        status: s,
+        timestamp: "1704556800",
+        recipientId: "1234567890",
+      };
+      expect(status.status).toBe(s);
+    });
   });
 });
