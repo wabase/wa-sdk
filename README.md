@@ -47,11 +47,11 @@ bun add @wazapin/wa-sdk
 ### 1. Initialize the Client
 
 ```typescript
-import { WhatsAppClient } from '@wazapin/wa-sdk';
+import { WhatsAppClient } from "@wazapin/wa-sdk";
 
 const client = new WhatsAppClient({
-  accessToken: 'YOUR_ACCESS_TOKEN',
-  phoneNumberId: 'YOUR_PHONE_NUMBER_ID',
+  accessToken: "YOUR_ACCESS_TOKEN",
+  phoneNumberId: "YOUR_PHONE_NUMBER_ID",
 });
 ```
 
@@ -60,12 +60,12 @@ const client = new WhatsAppClient({
 ```typescript
 // Send a text message
 const response = await client.messages.sendText({
-  to: '+1234567890',
-  text: 'Hello from WhatsApp SDK!',
+  to: "+1234567890",
+  text: "Hello from WhatsApp SDK!",
   previewUrl: true, // Enable link preview
 });
 
-console.log('Message sent:', response.messages[0].id);
+console.log("Message sent:", response.messages[0].id);
 ```
 
 ### 3. Send Media
@@ -73,17 +73,17 @@ console.log('Message sent:', response.messages[0].id);
 ```typescript
 // Send an image
 await client.messages.sendImage({
-  to: '+1234567890',
-  url: 'https://example.com/image.jpg',
-  caption: 'Check out this image!',
+  to: "+1234567890",
+  url: "https://example.com/image.jpg",
+  caption: "Check out this image!",
 });
 
 // Send a document
 await client.messages.sendDocument({
-  to: '+1234567890',
-  url: 'https://example.com/document.pdf',
-  caption: 'Here is the document you requested',
-  filename: 'invoice.pdf',
+  to: "+1234567890",
+  url: "https://example.com/document.pdf",
+  caption: "Here is the document you requested",
+  filename: "invoice.pdf",
 });
 ```
 
@@ -96,15 +96,15 @@ await client.messages.sendDocument({
 ```typescript
 const client = new WhatsAppClient({
   // Required
-  accessToken: 'YOUR_ACCESS_TOKEN',
-  phoneNumberId: 'YOUR_PHONE_NUMBER_ID',
+  accessToken: "YOUR_ACCESS_TOKEN",
+  phoneNumberId: "YOUR_PHONE_NUMBER_ID",
 
   // Optional
-  apiVersion: 'v24.0', // Default: latest
-  validation: 'relaxed', // 'off' | 'relaxed' | 'strict'
-  baseUrl: 'https://graph.facebook.com', // Custom base URL
+  apiVersion: "v24.0", // Default: latest
+  validation: "relaxed", // 'off' | 'relaxed' | 'strict'
+  baseUrl: "https://graph.facebook.com", // Custom base URL
   timeout: 30000, // Request timeout in ms (default: 30s)
-  
+
   // Retry configuration
   retry: {
     maxRetries: 3,
@@ -126,19 +126,19 @@ The SDK supports three validation modes:
 // 1. Off - No validation (fastest, use in production if you trust your data)
 const client = new WhatsAppClient({
   // ...
-  validation: 'off',
+  validation: "off",
 });
 
 // 2. Relaxed - Validates required fields only (recommended)
 const client = new WhatsAppClient({
   // ...
-  validation: 'relaxed', // Default
+  validation: "relaxed", // Default
 });
 
 // 3. Strict - Validates all fields strictly
 const client = new WhatsAppClient({
   // ...
-  validation: 'strict',
+  validation: "strict",
 });
 ```
 
@@ -156,6 +156,7 @@ Wazapin-SDK-Version: 1.0.0
 ```
 
 These headers help:
+
 - Meta track SDK usage for better support
 - Debug issues specific to SDK versions
 - Monitor SDK adoption and performance
@@ -167,35 +168,35 @@ The SDK includes a structured logger with automatic sensitive data redaction:
 ```typescript
 // Default: INFO level (recommended for production)
 const client = new WhatsAppClient({
-  phoneNumberId: 'xxx',
-  accessToken: 'xxx',
+  phoneNumberId: "xxx",
+  accessToken: "xxx",
   // No logger config = INFO level by default
 });
 
 // Debug mode (development)
 const devClient = new WhatsAppClient({
-  phoneNumberId: 'xxx',
-  accessToken: 'xxx',
+  phoneNumberId: "xxx",
+  accessToken: "xxx",
   logger: {
-    level: 'debug',      // Log everything
-    timestamp: true,     // Add timestamps
+    level: "debug", // Log everything
+    timestamp: true, // Add timestamps
   },
 });
 
 // Silent mode (production with minimal logs)
 const prodClient = new WhatsAppClient({
-  phoneNumberId: 'xxx',
-  accessToken: 'xxx',
+  phoneNumberId: "xxx",
+  accessToken: "xxx",
   logger: {
-    level: 'error',      // Only log errors
+    level: "error", // Only log errors
   },
 });
 
 // Custom logger handler
-import { WazapinLogger } from '@wazapin/wa-sdk';
+import { WazapinLogger } from "@wazapin/wa-sdk";
 
 const customLogger = new WazapinLogger({
-  level: 'info',
+  level: "info",
   timestamp: true,
   handler: {
     debug: (msg) => myDebugLogger(msg),
@@ -206,20 +207,20 @@ const customLogger = new WazapinLogger({
 });
 
 const client = new WhatsAppClient({
-  phoneNumberId: 'xxx',
-  accessToken: 'xxx',
+  phoneNumberId: "xxx",
+  accessToken: "xxx",
   logger: customLogger,
 });
 ```
 
 ### Log Levels
 
-| Level | Description | When to Use |
-|-------|-------------|-------------|
-| **debug** | All operations including HTTP requests/responses | Development, troubleshooting |
-| **info** | Important operations (client init, messages sent) | Production (default) |
-| **warn** | Warning conditions | Production |
-| **error** | Error conditions only | Minimal logging |
+| Level     | Description                                       | When to Use                  |
+| --------- | ------------------------------------------------- | ---------------------------- |
+| **debug** | All operations including HTTP requests/responses  | Development, troubleshooting |
+| **info**  | Important operations (client init, messages sent) | Production (default)         |
+| **warn**  | Warning conditions                                | Production                   |
+| **error** | Error conditions only                             | Minimal logging              |
 
 ### Log Format
 
@@ -232,6 +233,7 @@ const client = new WhatsAppClient({
 ```
 
 With timestamps:
+
 ```
 [2025-11-22T10:19:49.423Z] [wazapin-wa] [INFO] Message
 ```
@@ -241,12 +243,12 @@ With timestamps:
 The logger automatically redacts sensitive information:
 
 ```typescript
-logger.info('Request data', {
-  accessToken: 'secret123',    // Redacted
-  password: 'mypass',           // Redacted
-  apiKey: 'key123',             // Redacted
-  phoneNumberId: '123456',      // Kept
-  to: '+1234567890',            // Kept
+logger.info("Request data", {
+  accessToken: "secret123", // Redacted
+  password: "mypass", // Redacted
+  apiKey: "key123", // Redacted
+  phoneNumberId: "123456", // Kept
+  to: "+1234567890", // Kept
 });
 
 // Output:
@@ -260,6 +262,7 @@ logger.info('Request data', {
 ```
 
 **Redacted fields:**
+
 - `accessToken`, `access_token`
 - `password`
 - `secret`
@@ -271,14 +274,14 @@ logger.info('Request data', {
 
 ```typescript
 const client = new WhatsAppClient({
-  phoneNumberId: 'xxx',
-  accessToken: 'xxx',
-  logger: { level: 'debug', timestamp: true },
+  phoneNumberId: "xxx",
+  accessToken: "xxx",
+  logger: { level: "debug", timestamp: true },
 });
 
 await client.messages.sendText({
-  to: '+1234567890',
-  text: 'Hello',
+  to: "+1234567890",
+  text: "Hello",
 });
 
 // Console output:
@@ -297,23 +300,23 @@ await client.messages.sendText({
 ```typescript
 // Simple text
 await client.messages.sendText({
-  to: '+1234567890',
-  text: 'Hello World!',
+  to: "+1234567890",
+  text: "Hello World!",
 });
 
 // With link preview
 await client.messages.sendText({
-  to: '+1234567890',
-  text: 'Check out this link: https://example.com',
+  to: "+1234567890",
+  text: "Check out this link: https://example.com",
   previewUrl: true,
 });
 
 // Reply to a message
 await client.messages.sendText({
-  to: '+1234567890',
-  text: 'This is a reply',
+  to: "+1234567890",
+  text: "This is a reply",
   context: {
-    messageId: 'wamid.HBgL...', // Message ID to reply to
+    messageId: "wamid.HBgL...", // Message ID to reply to
   },
 });
 ```
@@ -323,16 +326,16 @@ await client.messages.sendText({
 ```typescript
 // Using URL
 await client.messages.sendImage({
-  to: '+1234567890',
-  url: 'https://example.com/image.jpg',
-  caption: 'Beautiful sunset 🌅',
+  to: "+1234567890",
+  url: "https://example.com/image.jpg",
+  caption: "Beautiful sunset 🌅",
 });
 
 // Using uploaded media ID
 await client.messages.sendImage({
-  to: '+1234567890',
-  mediaId: '1234567890',
-  caption: 'Previously uploaded image',
+  to: "+1234567890",
+  mediaId: "1234567890",
+  caption: "Previously uploaded image",
 });
 ```
 
@@ -340,9 +343,9 @@ await client.messages.sendImage({
 
 ```typescript
 await client.messages.sendVideo({
-  to: '+1234567890',
-  url: 'https://example.com/video.mp4',
-  caption: 'Check out this video!',
+  to: "+1234567890",
+  url: "https://example.com/video.mp4",
+  caption: "Check out this video!",
 });
 ```
 
@@ -350,8 +353,8 @@ await client.messages.sendVideo({
 
 ```typescript
 await client.messages.sendAudio({
-  to: '+1234567890',
-  url: 'https://example.com/audio.mp3',
+  to: "+1234567890",
+  url: "https://example.com/audio.mp3",
 });
 ```
 
@@ -359,10 +362,10 @@ await client.messages.sendAudio({
 
 ```typescript
 await client.messages.sendDocument({
-  to: '+1234567890',
-  url: 'https://example.com/document.pdf',
-  caption: 'Important document',
-  filename: 'invoice-2025.pdf',
+  to: "+1234567890",
+  url: "https://example.com/document.pdf",
+  caption: "Important document",
+  filename: "invoice-2025.pdf",
 });
 ```
 
@@ -370,11 +373,11 @@ await client.messages.sendDocument({
 
 ```typescript
 await client.messages.sendLocation({
-  to: '+1234567890',
+  to: "+1234567890",
   latitude: 37.7749,
   longitude: -122.4194,
-  name: 'San Francisco',
-  address: 'San Francisco, CA, USA',
+  name: "San Francisco",
+  address: "San Francisco, CA, USA",
 });
 ```
 
@@ -382,24 +385,24 @@ await client.messages.sendLocation({
 
 ```typescript
 await client.messages.sendContact({
-  to: '+1234567890',
+  to: "+1234567890",
   contacts: [
     {
       name: {
-        formatted_name: 'John Doe',
-        first_name: 'John',
-        last_name: 'Doe',
+        formatted_name: "John Doe",
+        first_name: "John",
+        last_name: "Doe",
       },
       phones: [
         {
-          phone: '+1234567890',
-          type: 'MOBILE',
+          phone: "+1234567890",
+          type: "MOBILE",
         },
       ],
       emails: [
         {
-          email: 'john@example.com',
-          type: 'WORK',
+          email: "john@example.com",
+          type: "WORK",
         },
       ],
     },
@@ -412,16 +415,16 @@ await client.messages.sendContact({
 ```typescript
 // Add reaction
 await client.messages.sendReaction({
-  to: '+1234567890',
-  messageId: 'wamid.HBgL...',
-  emoji: '👍',
+  to: "+1234567890",
+  messageId: "wamid.HBgL...",
+  emoji: "👍",
 });
 
 // Remove reaction
 await client.messages.sendReaction({
-  to: '+1234567890',
-  messageId: 'wamid.HBgL...',
-  emoji: '', // Empty string removes reaction
+  to: "+1234567890",
+  messageId: "wamid.HBgL...",
+  emoji: "", // Empty string removes reaction
 });
 ```
 
@@ -429,18 +432,18 @@ await client.messages.sendReaction({
 
 ```typescript
 await client.messages.sendInteractiveButtons({
-  to: '+1234567890',
-  body: 'Choose an option:',
+  to: "+1234567890",
+  body: "Choose an option:",
   buttons: [
-    { id: 'btn1', title: 'Option 1' },
-    { id: 'btn2', title: 'Option 2' },
-    { id: 'btn3', title: 'Option 3' },
+    { id: "btn1", title: "Option 1" },
+    { id: "btn2", title: "Option 2" },
+    { id: "btn3", title: "Option 3" },
   ],
   header: {
-    type: 'text',
-    text: 'Interactive Buttons',
+    type: "text",
+    text: "Interactive Buttons",
   },
-  footer: 'Powered by WhatsApp SDK',
+  footer: "Powered by WhatsApp SDK",
 });
 ```
 
@@ -448,22 +451,20 @@ await client.messages.sendInteractiveButtons({
 
 ```typescript
 await client.messages.sendInteractiveList({
-  to: '+1234567890',
-  body: 'Select a product:',
-  buttonText: 'View Menu',
+  to: "+1234567890",
+  body: "Select a product:",
+  buttonText: "View Menu",
   sections: [
     {
-      title: 'Main Dishes',
+      title: "Main Dishes",
       rows: [
-        { id: 'item1', title: 'Pizza', description: 'Delicious pizza' },
-        { id: 'item2', title: 'Burger', description: 'Juicy burger' },
+        { id: "item1", title: "Pizza", description: "Delicious pizza" },
+        { id: "item2", title: "Burger", description: "Juicy burger" },
       ],
     },
     {
-      title: 'Desserts',
-      rows: [
-        { id: 'item3', title: 'Ice Cream', description: 'Cool treat' },
-      ],
+      title: "Desserts",
+      rows: [{ id: "item3", title: "Ice Cream", description: "Cool treat" }],
     },
   ],
 });
@@ -476,51 +477,53 @@ Send messages with call-to-action URL buttons that provide a cleaner, more profe
 ```typescript
 // Basic CTA message
 await client.messages.sendInteractiveCTA({
-  to: '+1234567890',
-  body: 'Check out our new products!',
+  to: "+1234567890",
+  body: "Check out our new products!",
   action: {
-    displayText: 'View Products',
-    url: 'https://example.com/products'
-  }
+    displayText: "View Products",
+    url: "https://example.com/products",
+  },
 });
 
 // CTA with image header and footer
 await client.messages.sendInteractiveCTA({
-  to: '+1234567890',
+  to: "+1234567890",
   header: {
-    type: 'image',
-    image: { link: 'https://example.com/banner.jpg' }
+    type: "image",
+    image: { link: "https://example.com/banner.jpg" },
   },
-  body: 'Tap the button below to see available dates.',
+  body: "Tap the button below to see available dates.",
   action: {
-    displayText: 'See Dates',
-    url: 'https://example.com/calendar?ref=whatsapp'
+    displayText: "See Dates",
+    url: "https://example.com/calendar?ref=whatsapp",
   },
-  footer: 'Dates subject to change.'
+  footer: "Dates subject to change.",
 });
 
 // CTA with video header
 await client.messages.sendInteractiveCTA({
-  to: '+1234567890',
+  to: "+1234567890",
   header: {
-    type: 'video',
-    video: { link: 'https://example.com/promo.mp4' }
+    type: "video",
+    video: { link: "https://example.com/promo.mp4" },
   },
-  body: 'Watch our latest promotional video!',
+  body: "Watch our latest promotional video!",
   action: {
-    displayText: 'Learn More',
-    url: 'https://example.com/about'
-  }
+    displayText: "Learn More",
+    url: "https://example.com/about",
+  },
 });
 ```
 
 **Supported Header Types**:
+
 - Text (max 60 characters)
 - Image (from URL or media ID)
 - Video (from URL or media ID)
 - Document (from URL or media ID)
 
 **Character Limits**:
+
 - Header text: 60 characters
 - Body text: 1024 characters
 - Button text: 20 characters
@@ -533,27 +536,27 @@ Send interactive WhatsApp Flows (forms, surveys, appointments):
 ```typescript
 // Send a published flow
 await client.flows.send(phoneNumberId, {
-  to: '+1234567890',
-  header: { type: 'text', text: 'Book Your Appointment' },
-  body: { text: 'Complete your booking in a few steps' },
-  footer: { text: 'Powered by Your Business' },
-  flow_id: 'your-flow-id',
-  flow_cta: 'Book Now',
-  flow_action: 'navigate',
+  to: "+1234567890",
+  header: { type: "text", text: "Book Your Appointment" },
+  body: { text: "Complete your booking in a few steps" },
+  footer: { text: "Powered by Your Business" },
+  flow_id: "your-flow-id",
+  flow_cta: "Book Now",
+  flow_action: "navigate",
   flow_action_payload: {
-    screen: 'WELCOME',
-    data: { service: 'consultation' }
+    screen: "WELCOME",
+    data: { service: "consultation" },
   },
-  flow_token: 'session-123'
+  flow_token: "session-123",
 });
 
 // Test a draft flow by name
 await client.flows.send(phoneNumberId, {
-  to: '+1234567890',
-  body: { text: 'Test flow' },
-  flow_name: 'My Test Flow',
-  flow_cta: 'Start',
-  mode: 'draft'
+  to: "+1234567890",
+  body: { text: "Test flow" },
+  flow_name: "My Test Flow",
+  flow_cta: "Start",
+  mode: "draft",
 });
 ```
 
@@ -561,15 +564,13 @@ await client.flows.send(phoneNumberId, {
 
 ```typescript
 await client.messages.sendTemplate({
-  to: '+1234567890',
-  templateName: 'hello_world',
-  languageCode: 'en',
+  to: "+1234567890",
+  templateName: "hello_world",
+  languageCode: "en",
   components: [
     {
-      type: 'body',
-      parameters: [
-        { type: 'text', text: 'John' },
-      ],
+      type: "body",
+      parameters: [{ type: "text", text: "John" }],
     },
   ],
 });
@@ -578,7 +579,7 @@ await client.messages.sendTemplate({
 ### Mark Messages as Read
 
 ```typescript
-await client.messages.markAsRead('wamid.HBgL...');
+await client.messages.markAsRead("wamid.HBgL...");
 ```
 
 ---
@@ -588,22 +589,19 @@ await client.messages.markAsRead('wamid.HBgL...');
 ### Upload Media
 
 ```typescript
-import { readFile } from 'fs/promises';
+import { readFile } from "fs/promises";
 
 // Upload from file
-const fileBuffer = await readFile('./image.jpg');
-const uploadResponse = await client.media.upload(
-  fileBuffer,
-  'image/jpeg'
-);
+const fileBuffer = await readFile("./image.jpg");
+const uploadResponse = await client.media.upload(fileBuffer, "image/jpeg");
 
-console.log('Media ID:', uploadResponse.id);
+console.log("Media ID:", uploadResponse.id);
 
 // Use uploaded media in message
 await client.messages.sendImage({
-  to: '+1234567890',
+  to: "+1234567890",
   mediaId: uploadResponse.id,
-  caption: 'Uploaded image',
+  caption: "Uploaded image",
 });
 ```
 
@@ -611,26 +609,26 @@ await client.messages.sendImage({
 
 ```typescript
 // Get media URL and metadata
-const mediaInfo = await client.media.getUrl('MEDIA_ID');
-console.log('URL:', mediaInfo.url); // Valid for 5 minutes
-console.log('MIME Type:', mediaInfo.mime_type);
-console.log('File Size:', mediaInfo.file_size);
+const mediaInfo = await client.media.getUrl("MEDIA_ID");
+console.log("URL:", mediaInfo.url); // Valid for 5 minutes
+console.log("MIME Type:", mediaInfo.mime_type);
+console.log("File Size:", mediaInfo.file_size);
 
 // Download media directly
-const downloadResponse = await client.media.download('MEDIA_ID');
-console.log('Buffer:', downloadResponse.buffer);
-console.log('MIME Type:', downloadResponse.mimeType);
+const downloadResponse = await client.media.download("MEDIA_ID");
+console.log("Buffer:", downloadResponse.buffer);
+console.log("MIME Type:", downloadResponse.mimeType);
 ```
 
 ### Media File Limits
 
-| Media Type | Max Size | Supported Formats |
-|------------|----------|-------------------|
-| **Image** | 5 MB | JPEG, PNG |
-| **Video** | 16 MB | 3GPP, MP4 |
-| **Audio** | 16 MB | AAC, AMR, MP3, M4A, OGG (OPUS) |
-| **Document** | 100 MB | TXT, XLS, XLSX, DOC, DOCX, PPT, PPTX, PDF |
-| **Sticker** | 500 KB (animated), 100 KB (static) | WebP |
+| Media Type   | Max Size                           | Supported Formats                         |
+| ------------ | ---------------------------------- | ----------------------------------------- |
+| **Image**    | 5 MB                               | JPEG, PNG                                 |
+| **Video**    | 16 MB                              | 3GPP, MP4                                 |
+| **Audio**    | 16 MB                              | AAC, AMR, MP3, M4A, OGG (OPUS)            |
+| **Document** | 100 MB                             | TXT, XLS, XLSX, DOC, DOCX, PPT, PPTX, PDF |
+| **Sticker**  | 500 KB (animated), 100 KB (static) | WebP                                      |
 
 ---
 
@@ -643,83 +641,89 @@ Onboard businesses to WhatsApp Cloud API using the Embedded Signup flow.
 The SDK now provides high-level helpers that reduce 30+ lines of manual code to just a few lines:
 
 ```typescript
-import { OAuthHelper, EmbeddedSignupFlow } from '@wazapin/wa-sdk';
+import { OAuthHelper, EmbeddedSignupFlow } from "@wazapin/wa-sdk";
 
 // Step 1: Generate signup URL (frontend/API)
 const oauth = new OAuthHelper();
 const { url, state } = oauth.generateSignupUrl({
-  appId: 'YOUR_APP_ID',
-  configId: 'YOUR_CONFIG_ID',
-  redirectUri: 'https://example.com/callback',
+  appId: "YOUR_APP_ID",
+  configId: "YOUR_CONFIG_ID",
+  redirectUri: "https://example.com/callback",
 });
 
 // Store state for CSRF verification, then redirect user to `url`
 
 // Step 2: Handle OAuth callback (backend)
 const flow = new EmbeddedSignupFlow({
-  systemUserToken: 'YOUR_SYSTEM_USER_TOKEN',
+  systemUserToken: "YOUR_SYSTEM_USER_TOKEN",
   // IMPORTANT: For Cloudflare Workers, pass fetch.bind(globalThis)
   fetch: fetch.bind(globalThis),
 });
 
 const result = await flow.complete({
-  code: 'AUTH_CODE_FROM_CALLBACK',
-  state: 'CSRF_STATE',
-  appId: 'YOUR_APP_ID',
-  appSecret: 'YOUR_APP_SECRET',
-  redirectUri: 'https://example.com/callback',
+  code: "AUTH_CODE_FROM_CALLBACK",
+  state: "CSRF_STATE",
+  appId: "YOUR_APP_ID",
+  appSecret: "YOUR_APP_SECRET",
+  redirectUri: "https://example.com/callback",
   options: {
-    autoSubscribeWebhooks: true,  // Auto-subscribe to WABA webhooks
-    autoRegisterPhone: true,       // Auto-register phone with 2FA PIN
+    autoSubscribeWebhooks: true, // Auto-subscribe to WABA webhooks
+    autoRegisterPhone: true, // Auto-register phone with 2FA PIN
   },
 });
 
 // Step 3: Use the credentials!
-console.log('WABA ID:', result.wabaId);
-console.log('Phone Number ID:', result.phoneNumberId);
-console.log('Phone Number:', result.phoneNumber);
-console.log('Display Name:', result.displayName);
-console.log('PIN:', result.pin); // Save this securely!
+console.log("WABA ID:", result.wabaId);
+console.log("Phone Number ID:", result.phoneNumberId);
+console.log("Phone Number:", result.phoneNumber);
+console.log("Display Name:", result.displayName);
+console.log("PIN:", result.pin); // Save this securely!
 ```
 
 ### OAuth Helper Methods
 
 ```typescript
-import { OAuthHelper, generateSignupUrl, parseCallbackUrl } from '@wazapin/wa-sdk';
+import {
+  OAuthHelper,
+  generateSignupUrl,
+  parseCallbackUrl,
+} from "@wazapin/wa-sdk";
 
 const oauth = new OAuthHelper();
 
 // Generate embedded signup URL
 const { url, state } = oauth.generateSignupUrl({
-  appId: 'YOUR_APP_ID',
-  configId: 'YOUR_CONFIG_ID',
-  redirectUri: 'https://example.com/callback',
+  appId: "YOUR_APP_ID",
+  configId: "YOUR_CONFIG_ID",
+  redirectUri: "https://example.com/callback",
   // Optional:
-  apiVersion: 'v21.0',
-  featureType: 'whatsapp_business_app_onboarding',
+  apiVersion: "v21.0",
+  featureType: "whatsapp_business_app_onboarding",
 });
 
 // Generate basic OAuth URL (without embedded signup extras)
 const basicOAuth = oauth.generateBasicOAuthUrl({
-  appId: 'YOUR_APP_ID',
-  redirectUri: 'https://example.com/callback',
-  scopes: ['whatsapp_business_management', 'whatsapp_business_messaging'],
+  appId: "YOUR_APP_ID",
+  redirectUri: "https://example.com/callback",
+  scopes: ["whatsapp_business_management", "whatsapp_business_messaging"],
 });
 
 // Parse callback URL
-const callback = oauth.parseCallbackUrl('https://example.com/callback?code=xxx&state=yyy');
+const callback = oauth.parseCallbackUrl(
+  "https://example.com/callback?code=xxx&state=yyy",
+);
 console.log(callback.code, callback.state);
 
 // Exchange code for token
 const { accessToken } = await oauth.exchangeCodeForToken({
-  code: 'AUTH_CODE',
-  appId: 'YOUR_APP_ID',
-  appSecret: 'YOUR_APP_SECRET',
-  redirectUri: 'https://example.com/callback',
+  code: "AUTH_CODE",
+  appId: "YOUR_APP_ID",
+  appSecret: "YOUR_APP_SECRET",
+  redirectUri: "https://example.com/callback",
 });
 
 // Get WABA IDs from token
-const wabaIds = await oauth.getWABAIds(accessToken, 'SYSTEM_USER_TOKEN');
+const wabaIds = await oauth.getWABAIds(accessToken, "SYSTEM_USER_TOKEN");
 ```
 
 ### Cloudflare Workers Compatibility
@@ -729,7 +733,7 @@ const wabaIds = await oauth.getWABAIds(accessToken, 'SYSTEM_USER_TOKEN');
 ```typescript
 // Cloudflare Workers - REQUIRED
 const flow = new EmbeddedSignupFlow({
-  systemUserToken: 'YOUR_SYSTEM_USER_TOKEN',
+  systemUserToken: "YOUR_SYSTEM_USER_TOKEN",
   fetch: fetch.bind(globalThis), // Required for CF Workers!
 });
 
@@ -753,38 +757,38 @@ This is because Cloudflare Workers restricts the global `fetch` function in cert
 
 ```typescript
 const result = await flow.complete({
-  code: 'AUTH_CODE',
-  state: 'CSRF_STATE',
-  appId: 'YOUR_APP_ID',
-  appSecret: 'YOUR_APP_SECRET',
-  redirectUri: 'https://example.com/callback',
+  code: "AUTH_CODE",
+  state: "CSRF_STATE",
+  appId: "YOUR_APP_ID",
+  appSecret: "YOUR_APP_SECRET",
+  redirectUri: "https://example.com/callback",
   options: {
     // Auto-subscribe to webhooks (default: true)
     autoSubscribeWebhooks: true,
-    
+
     // Auto-register phone with 2-step verification (default: true)
     autoRegisterPhone: true,
-    
+
     // Custom 6-digit PIN (auto-generated if not provided)
-    pin: '123456',
-    
+    pin: "123456",
+
     // Override webhook URL for this WABA
-    webhookOverrideUrl: 'https://custom.example.com/webhook',
-    webhookVerifyToken: 'my_verify_token',
+    webhookOverrideUrl: "https://custom.example.com/webhook",
+    webhookVerifyToken: "my_verify_token",
   },
 });
 
 // Result includes:
-result.wabaId;              // WhatsApp Business Account ID
-result.phoneNumberId;       // Phone Number ID for API calls
-result.phoneNumber;         // Display phone number
-result.displayName;         // Verified business name
-result.qualityRating;       // Phone quality rating
+result.wabaId; // WhatsApp Business Account ID
+result.phoneNumberId; // Phone Number ID for API calls
+result.phoneNumber; // Display phone number
+result.displayName; // Verified business name
+result.qualityRating; // Phone quality rating
 result.accountReviewStatus; // WABA review status
-result.businessToken;       // Short-lived business token
-result.pin;                 // 2FA PIN (if autoRegisterPhone)
-result.webhooksSubscribed;  // Whether webhooks were subscribed
-result.phoneRegistered;     // Whether phone was registered
+result.businessToken; // Short-lived business token
+result.pin; // 2FA PIN (if autoRegisterPhone)
+result.webhooksSubscribed; // Whether webhooks were subscribed
+result.phoneRegistered; // Whether phone was registered
 ```
 
 ### Manual Step-by-Step Flow
@@ -792,23 +796,23 @@ result.phoneRegistered;     // Whether phone was registered
 For more control, you can use individual methods:
 
 ```typescript
-import { WhatsAppClient } from '@wazapin/wa-sdk';
+import { WhatsAppClient } from "@wazapin/wa-sdk";
 
 const client = new WhatsAppClient({
-  phoneNumberId: 'your-phone-id',
-  accessToken: 'your-system-user-token' // System User token required
+  phoneNumberId: "your-phone-id",
+  accessToken: "your-system-user-token", // System User token required
 });
 
 // Step 1: Debug OAuth token from signup flow
 const tokenInfo = await client.embeddedSignup.debugToken(oauthToken);
 const wabaIds = client.embeddedSignup.extractWABAIds(tokenInfo);
-console.log('Shared WABAs:', wabaIds);
+console.log("Shared WABAs:", wabaIds);
 
 // Step 2: Get phone numbers from WABA (new convenience method!)
 const phones = await client.embeddedSignup.getWABAPhoneNumbers(wabaIds[0]);
 // Or get just the primary phone:
 const primary = await client.embeddedSignup.getPrimaryPhoneNumber(wabaIds[0]);
-console.log('Phone ID:', primary.phoneNumberId);
+console.log("Phone ID:", primary.phoneNumberId);
 
 // Step 3: Subscribe to webhooks
 await client.embeddedSignup.subscribeToWABA(wabaIds[0]);
@@ -819,13 +823,13 @@ const phoneClient = new WhatsAppClient({
   accessToken: businessToken,
 });
 await phoneClient.registration.registerPhone({
-  messaging_product: 'whatsapp',
-  pin: '123456',
+  messaging_product: "whatsapp",
+  pin: "123456",
 });
 
 // Step 5: Get WABA details
 const wabas = await client.embeddedSignup.listSharedWABAs(businessId);
-wabas.data.forEach(waba => {
+wabas.data.forEach((waba) => {
   console.log(`WABA: ${waba.name} (${waba.id})`);
   console.log(`Currency: ${waba.currency}`);
 });
@@ -833,22 +837,22 @@ wabas.data.forEach(waba => {
 // Step 6: Add system user with permissions
 await client.embeddedSignup.addSystemUser(wabaId, {
   user: systemUserId,
-  tasks: ['MANAGE'] // or ['DEVELOP'] or both
+  tasks: ["MANAGE"], // or ['DEVELOP'] or both
 });
 
 // Step 7: Share credit line for billing
 const allocation = await client.embeddedSignup.attachCreditLine(creditLineId, {
   waba_id: wabaId,
-  waba_currency: 'USD'
+  waba_currency: "USD",
 });
-console.log('Allocation Config ID:', allocation.allocation_config_id);
+console.log("Allocation Config ID:", allocation.allocation_config_id);
 
 // Step 8: Verify credit sharing
 const record = await client.embeddedSignup.verifyCreditSharing(
-  allocation.allocation_config_id
+  allocation.allocation_config_id,
 );
 if (record.receiving_credential?.id) {
-  console.log('Credit successfully shared');
+  console.log("Credit successfully shared");
 }
 ```
 
@@ -857,12 +861,14 @@ if (record.receiving_credential?.id) {
 ```typescript
 // Get WABAs created after timestamp
 const recentWabas = await client.embeddedSignup.listOwnedWABAs(businessId, {
-  filtering: [{
-    field: 'creation_time',
-    operator: 'GREATER_THAN',
-    value: '1604962813'
-  }],
-  sort: 'creation_time_descending'
+  filtering: [
+    {
+      field: "creation_time",
+      operator: "GREATER_THAN",
+      value: "1604962813",
+    },
+  ],
+  sort: "creation_time_descending",
 });
 ```
 
@@ -871,17 +877,22 @@ const recentWabas = await client.embeddedSignup.listOwnedWABAs(businessId, {
 ```typescript
 // Get credit lines
 const credits = await client.embeddedSignup.getExtendedCredits(businessId, [
-  'id', 'legal_entity_name', 'credit_available', 'balance', 'currency'
+  "id",
+  "legal_entity_name",
+  "credit_available",
+  "balance",
+  "currency",
 ]);
 
-credits.data.forEach(credit => {
+credits.data.forEach((credit) => {
   console.log(`${credit.legal_entity_name}`);
   console.log(`Available: ${credit.credit_available} cents`);
 });
 
 // Get credit sharing status
-const record = await client.embeddedSignup.getCreditSharingRecord(allocationConfigId);
-console.log('Status:', record.request_status); // 'ACTIVE' or 'DELETED'
+const record =
+  await client.embeddedSignup.getCreditSharingRecord(allocationConfigId);
+console.log("Status:", record.request_status); // 'ACTIVE' or 'DELETED'
 
 // Revoke credit access
 await client.embeddedSignup.revokeCreditSharing(allocationConfigId);
@@ -892,13 +903,13 @@ await client.embeddedSignup.revokeCreditSharing(allocationConfigId);
 ```typescript
 // Set alternate webhook URL for specific WABA
 await client.embeddedSignup.overrideCallbackURL(wabaId, {
-  override_callback_uri: 'https://alternate.example.com/webhook',
-  verify_token: 'my_verify_token'
+  override_callback_uri: "https://alternate.example.com/webhook",
+  verify_token: "my_verify_token",
 });
 
 // Verify override was set
 const subs = await client.embeddedSignup.listSubscriptions(wabaId);
-console.log('Override URL:', subs.data[0].override_callback_uri);
+console.log("Override URL:", subs.data[0].override_callback_uri);
 ```
 
 ### Manage Phone Numbers and Templates
@@ -906,30 +917,32 @@ console.log('Override URL:', subs.data[0].override_callback_uri);
 ```typescript
 // List phone numbers with filtering
 const livePhones = await client.embeddedSignup.listPhoneNumbers(wabaId, {
-  filtering: [{
-    field: 'account_mode',
-    operator: 'EQUAL',
-    value: 'LIVE'
-  }]
+  filtering: [
+    {
+      field: "account_mode",
+      operator: "EQUAL",
+      value: "LIVE",
+    },
+  ],
 });
 
 // Get display name certificates
 const certs = await client.embeddedSignup.getPhoneNumberCertificate(wabaId);
-certs.data.forEach(phone => {
+certs.data.forEach((phone) => {
   console.log(`${phone.display_phone_number}: ${phone.name_status}`);
   if (phone.new_certificate) {
-    console.log('New certificate:', phone.new_certificate);
+    console.log("New certificate:", phone.new_certificate);
   }
 });
 
 // List message templates
 const templates = await client.embeddedSignup.listMessageTemplates(wabaId);
-const approved = templates.data.filter(t => t.status === 'APPROVED');
+const approved = templates.data.filter((t) => t.status === "APPROVED");
 console.log(`${approved.length} approved templates`);
 
 // Get template namespace
 const ns = await client.embeddedSignup.getTemplateNamespace(wabaId);
-console.log('Namespace:', ns.message_template_namespace);
+console.log("Namespace:", ns.message_template_namespace);
 ```
 
 ---
@@ -939,10 +952,10 @@ console.log('Namespace:', ns.message_template_namespace);
 ### Parse Webhook Events
 
 ```typescript
-import { WebhookEvent } from '@wazapin/wa-sdk';
+import { WebhookEvent } from "@wazapin/wa-sdk";
 
 // In your webhook endpoint
-app.post('/webhook', async (req, res) => {
+app.post("/webhook", async (req, res) => {
   try {
     // Parse incoming webhook
     const event: WebhookEvent = client.webhooks.parse(req.body);
@@ -950,12 +963,12 @@ app.post('/webhook', async (req, res) => {
     // Handle different event types
     if (event.entry[0]?.changes[0]?.value?.messages) {
       const messages = event.entry[0].changes[0].value.messages;
-      
+
       for (const message of messages) {
-        if (message.type === 'text') {
-          console.log('Received text:', message.text.body);
-        } else if (message.type === 'image') {
-          console.log('Received image:', message.image.id);
+        if (message.type === "text") {
+          console.log("Received text:", message.text.body);
+        } else if (message.type === "image") {
+          console.log("Received image:", message.image.id);
         }
         // ... handle other types
       }
@@ -964,15 +977,15 @@ app.post('/webhook', async (req, res) => {
     // Handle status updates
     if (event.entry[0]?.changes[0]?.value?.statuses) {
       const statuses = event.entry[0].changes[0].value.statuses;
-      
+
       for (const status of statuses) {
-        console.log('Message status:', status.status); // sent, delivered, read, failed
+        console.log("Message status:", status.status); // sent, delivered, read, failed
       }
     }
 
     res.sendStatus(200);
   } catch (error) {
-    console.error('Webhook error:', error);
+    console.error("Webhook error:", error);
     res.sendStatus(500);
   }
 });
@@ -981,15 +994,15 @@ app.post('/webhook', async (req, res) => {
 ### Verify Webhook Signatures
 
 ```typescript
-app.post('/webhook', async (req, res) => {
-  const signature = req.headers['x-hub-signature-256'] as string;
+app.post("/webhook", async (req, res) => {
+  const signature = req.headers["x-hub-signature-256"] as string;
   const rawBody = JSON.stringify(req.body);
 
   // Verify signature
   const isValid = await client.webhooks.verify(
     rawBody,
     signature,
-    'YOUR_APP_SECRET'
+    "YOUR_APP_SECRET",
   );
 
   if (!isValid) {
@@ -999,6 +1012,146 @@ app.post('/webhook', async (req, res) => {
   // Process webhook...
   res.sendStatus(200);
 });
+```
+
+### New Webhook Events (v2.1.0+)
+
+#### Message Reactions
+
+```typescript
+const event = client.webhooks.parse(payload);
+
+if (event.type === 'message_reaction') {
+  console.log(`${event.from} reacted with ${event.reaction.emoji}`);
+  console.log(`Message ID: ${event.reaction.message_id}`);
+}
+```
+
+#### Session End Events
+
+```typescript
+if (event.type === 'session_end') {
+  console.log(`Session ended for ${event.session.phone_number}`);
+  console.log(`Duration: ${event.session.duration_seconds} seconds`);
+  // Notify user that 24-hour window has expired
+}
+```
+
+#### Cart Updates
+
+```typescript
+if (event.type === 'cart_update') {
+  console.log(`Cart ${event.cart.action}: ${event.cart.items.length} items`);
+  console.log(`Total: $${event.cart.total_amount / 100}`);
+  
+  event.cart.items.forEach(item => {
+    console.log(`- ${item.product_id}: ${item.quantity}x $${item.item_price / 100}`);
+  });
+}
+```
+
+#### Commerce Checkout
+
+```typescript
+if (event.type === 'commerce_checkout') {
+  console.log(`Checkout ${event.checkout.status}`);
+  console.log(`Amount: ${event.checkout.currency} ${event.checkout.total_amount / 100}`);
+  
+  if (event.checkout.status === 'completed') {
+    // Process order
+  }
+}
+```
+
+#### Account Updates
+
+```typescript
+if (event.type === 'account_update') {
+  if (event.event === 'AD_ACCOUNT_LINKED') {
+    console.log('Ad account linked to WABA');
+  } else if (event.event === 'PAYMENT_METHOD_SETUP') {
+    console.log('Payment method configured');
+  }
+}
+```
+
+### Phase 2 Features (v2.2.0+)
+
+#### Media URL Auto-Fallback (v23.0+ optimization)
+
+```typescript
+import { getMediaUrl } from '@wazapin/wa-sdk';
+
+// Parse webhook
+const event = client.webhooks.parse(req.body);
+const image = event.entry[0]?.changes[0]?.value?.messages?.[0]?.image;
+
+if (image) {
+  // Option 1: Use auto-fallback helper (recommended)
+  const url = await getMediaUrl(image, client);
+  console.log('Download from:', url);
+  
+  // Option 2: Manual check (if you want explicit control)
+  if (image.url) {
+    // v23.0+ - URL already in webhook (no API call needed!)
+    console.log('Direct URL:', image.url);
+  } else {
+    // v20.0-v22.0 - Fetch URL via API
+    const response = await client.media.getUrl(image.id);
+    console.log('Fetched URL:', response.url);
+  }
+}
+```
+
+**Performance:** v23.0+ saves ~100-200ms per media message (no API roundtrip)
+
+#### Voice Message Transcription (v23.0+)
+
+```typescript
+const audio = event.entry[0]?.changes[0]?.value?.messages?.[0]?.audio;
+
+if (audio?.voice) {
+  // Check if transcription is available
+  if (audio.text) {
+    console.log('Voice transcription:', audio.text);
+    // Use transcription for search, analytics, automation
+  } else {
+    console.log('Voice message (transcription not available)');
+    // Handle gracefully - transcription may fail due to:
+    // - Background noise
+    // - Unsupported language
+    // - User privacy settings
+  }
+}
+```
+
+#### Media Playback Tracking (v20.0+)
+
+```typescript
+const statuses = event.entry[0]?.changes[0]?.value?.statuses;
+
+if (statuses) {
+  for (const status of statuses) {
+    switch (status.status) {
+      case 'sent':
+        console.log('Message sent to WhatsApp servers');
+        break;
+      case 'delivered':
+        console.log('Message delivered to recipient device');
+        break;
+      case 'read':
+        console.log('Message read by recipient');
+        break;
+      case 'played':
+        console.log('Media (voice/video) played by recipient');
+        // Track engagement, analytics, follow-ups
+        break;
+      case 'failed':
+        console.log('Message failed:', status.errors);
+        break;
+    }
+  }
+}
 ```
 
 ---
@@ -1015,13 +1168,13 @@ Messaging limits are the maximum number of unique WhatsApp user phone numbers yo
 
 ### Available Tiers
 
-| Tier | Max Unique Contacts | Availability |
-|------|-------------------|--------------|
-| **TIER_250** | 250 per 24 hours | Default for new accounts |
-| **TIER_2000** | 2,000 per 24 hours | After verification or quality messaging |
-| **TIER_10K** | 10,000 per 24 hours | Via automatic scaling |
-| **TIER_100K** | 100,000 per 24 hours | Via automatic scaling |
-| **TIER_UNLIMITED** | Unlimited | Via automatic scaling |
+| Tier               | Max Unique Contacts  | Availability                            |
+| ------------------ | -------------------- | --------------------------------------- |
+| **TIER_250**       | 250 per 24 hours     | Default for new accounts                |
+| **TIER_2000**      | 2,000 per 24 hours   | After verification or quality messaging |
+| **TIER_10K**       | 10,000 per 24 hours  | Via automatic scaling                   |
+| **TIER_100K**      | 100,000 per 24 hours | Via automatic scaling                   |
+| **TIER_UNLIMITED** | Unlimited            | Via automatic scaling                   |
 
 ### Check Your Current Limit
 
@@ -1029,8 +1182,8 @@ Messaging limits are the maximum number of unique WhatsApp user phone numbers yo
 // Get your current messaging limit
 const limit = await client.account.getMessagingLimit();
 
-console.log('Current tier:', limit.whatsapp_business_manager_messaging_limit);
-console.log('Phone number ID:', limit.id);
+console.log("Current tier:", limit.whatsapp_business_manager_messaging_limit);
+console.log("Phone number ID:", limit.id);
 
 // Example output:
 // Current tier: TIER_250
@@ -1040,32 +1193,32 @@ console.log('Phone number ID:', limit.id);
 ### Understanding Tier Values
 
 ```typescript
-import type { MessagingLimitTier } from '@wazapin/wa-sdk';
+import type { MessagingLimitTier } from "@wazapin/wa-sdk";
 
 const limit = await client.account.getMessagingLimit();
 
 // Check your tier and take action
 switch (limit.whatsapp_business_manager_messaging_limit) {
-  case 'TIER_250':
-    console.log('You can message up to 250 unique contacts per 24 hours');
-    console.log('Complete verification or send quality messages to increase');
+  case "TIER_250":
+    console.log("You can message up to 250 unique contacts per 24 hours");
+    console.log("Complete verification or send quality messages to increase");
     break;
-  
-  case 'TIER_2000':
-    console.log('You can message up to 2,000 unique contacts per 24 hours');
-    console.log('Use at least 50% of your limit to trigger automatic scaling');
+
+  case "TIER_2000":
+    console.log("You can message up to 2,000 unique contacts per 24 hours");
+    console.log("Use at least 50% of your limit to trigger automatic scaling");
     break;
-  
-  case 'TIER_10K':
-    console.log('You can message up to 10,000 unique contacts per 24 hours');
+
+  case "TIER_10K":
+    console.log("You can message up to 10,000 unique contacts per 24 hours");
     break;
-  
-  case 'TIER_100K':
-    console.log('You can message up to 100,000 unique contacts per 24 hours');
+
+  case "TIER_100K":
+    console.log("You can message up to 100,000 unique contacts per 24 hours");
     break;
-  
-  case 'TIER_UNLIMITED':
-    console.log('You have unlimited messaging capability!');
+
+  case "TIER_UNLIMITED":
+    console.log("You have unlimited messaging capability!");
     break;
 }
 ```
@@ -1106,16 +1259,16 @@ Once you reach TIER_2000, WhatsApp will **automatically increase** your limit if
 // Check limits daily
 const checkDailyLimit = async () => {
   const limit = await client.account.getMessagingLimit();
-  
+
   // Store in your database
   await db.limits.create({
     tier: limit.whatsapp_business_manager_messaging_limit,
     checkedAt: new Date(),
   });
-  
+
   // Alert if still at TIER_250 after 30 days
-  if (limit.whatsapp_business_manager_messaging_limit === 'TIER_250') {
-    console.warn('Still at basic tier - consider business verification');
+  if (limit.whatsapp_business_manager_messaging_limit === "TIER_250") {
+    console.warn("Still at basic tier - consider business verification");
   }
 };
 ```
@@ -1128,15 +1281,19 @@ const trackMessageVolume = async () => {
   const sentToday = await db.messages.count({
     date: new Date().toDateString(),
   });
-  
+
   const limit = await client.account.getMessagingLimit();
-  const maxPerDay = getTierLimit(limit.whatsapp_business_manager_messaging_limit);
-  
-  console.log(`Sent: ${sentToday}/${maxPerDay} (${(sentToday/maxPerDay*100).toFixed(1)}%)`);
-  
+  const maxPerDay = getTierLimit(
+    limit.whatsapp_business_manager_messaging_limit,
+  );
+
+  console.log(
+    `Sent: ${sentToday}/${maxPerDay} (${((sentToday / maxPerDay) * 100).toFixed(1)}%)`,
+  );
+
   // Alert when approaching limit
   if (sentToday >= maxPerDay * 0.8) {
-    console.warn('Approaching daily messaging limit!');
+    console.warn("Approaching daily messaging limit!");
   }
 };
 
@@ -1158,16 +1315,16 @@ function getTierLimit(tier: MessagingLimitTier): number {
 // Tips for maintaining high quality ratings:
 const qualityBestPractices = {
   // ✅ DO:
-  personalizedMessages: 'Use customer names and relevant context',
-  timing: 'Send during appropriate hours for the recipient timezone',
-  templates: 'Use approved message templates with clear value',
-  optIn: 'Ensure customers have opted in to receive messages',
-  
+  personalizedMessages: "Use customer names and relevant context",
+  timing: "Send during appropriate hours for the recipient timezone",
+  templates: "Use approved message templates with clear value",
+  optIn: "Ensure customers have opted in to receive messages",
+
   // ❌ DON'T:
-  spam: 'Avoid sending too many messages to same user',
-  generic: 'Avoid generic, impersonal bulk messages',
-  clickbait: 'Avoid misleading or clickbait content',
-  blocking: 'Monitor and reduce user blocks/reports',
+  spam: "Avoid sending too many messages to same user",
+  generic: "Avoid generic, impersonal bulk messages",
+  clickbait: "Avoid misleading or clickbait content",
+  blocking: "Monitor and reduce user blocks/reports",
 };
 ```
 
@@ -1200,22 +1357,23 @@ Retrieve your current business profile information:
 const profile = await client.account.getBusinessProfile();
 
 const data = profile.data[0];
-console.log('About:', data.about);
-console.log('Address:', data.address);
-console.log('Email:', data.email);
-console.log('Websites:', data.websites);
-console.log('Vertical:', data.vertical);
-console.log('Profile Picture:', data.profile_picture_url);
+console.log("About:", data.about);
+console.log("Address:", data.address);
+console.log("Email:", data.email);
+console.log("Websites:", data.websites);
+console.log("Vertical:", data.vertical);
+console.log("Profile Picture:", data.profile_picture_url);
 
 // Get specific fields only
 const basicProfile = await client.account.getBusinessProfile([
-  'about',
-  'email',
-  'websites'
+  "about",
+  "email",
+  "websites",
 ]);
 ```
 
 **Available Fields**:
+
 - `about` - Business description (max 139 characters)
 - `address` - Business address (max 256 characters)
 - `description` - Extended description (max 512 characters)
@@ -1232,24 +1390,26 @@ Update your business profile information:
 ```typescript
 // Update complete profile
 await client.account.updateBusinessProfile({
-  messaging_product: 'whatsapp',
-  about: 'Your friendly neighborhood business',
-  address: '123 Main St, City, Country',
-  description: 'We provide excellent service with quality products for all your needs.',
-  email: 'contact@business.com',
-  vertical: 'RETAIL',
-  websites: ['https://business.com', 'https://shop.business.com']
+  messaging_product: "whatsapp",
+  about: "Your friendly neighborhood business",
+  address: "123 Main St, City, Country",
+  description:
+    "We provide excellent service with quality products for all your needs.",
+  email: "contact@business.com",
+  vertical: "RETAIL",
+  websites: ["https://business.com", "https://shop.business.com"],
 });
 
 // Update partial profile
 await client.account.updateBusinessProfile({
-  messaging_product: 'whatsapp',
-  about: 'New business description',
-  email: 'newemail@business.com'
+  messaging_product: "whatsapp",
+  about: "New business description",
+  email: "newemail@business.com",
 });
 ```
 
 **Field Limits**:
+
 - `about`: Maximum 139 characters
 - `address`: Maximum 256 characters
 - `description`: Maximum 512 characters
@@ -1260,25 +1420,25 @@ await client.account.updateBusinessProfile({
 
 Valid business category options:
 
-| Category | Description |
-|----------|-------------|
-| `AUTOMOTIVE` | Automotive industry |
-| `BEAUTY` | Beauty & cosmetics |
-| `APPAREL` | Clothing & fashion |
-| `EDU` | Education |
-| `ENTERTAIN` | Entertainment |
-| `EVENT_PLAN` | Event planning |
-| `FINANCE` | Financial services |
-| `GROCERY` | Grocery & food retail |
-| `GOVT` | Government services |
-| `HOTEL` | Hotels & lodging |
-| `HEALTH` | Healthcare |
-| `NONPROFIT` | Non-profit organizations |
-| `PROF_SERVICES` | Professional services |
-| `RETAIL` | Retail & e-commerce |
-| `TRAVEL` | Travel & tourism |
-| `RESTAURANT` | Restaurants & dining |
-| `OTHER` | Other industries |
+| Category        | Description              |
+| --------------- | ------------------------ |
+| `AUTOMOTIVE`    | Automotive industry      |
+| `BEAUTY`        | Beauty & cosmetics       |
+| `APPAREL`       | Clothing & fashion       |
+| `EDU`           | Education                |
+| `ENTERTAIN`     | Entertainment            |
+| `EVENT_PLAN`    | Event planning           |
+| `FINANCE`       | Financial services       |
+| `GROCERY`       | Grocery & food retail    |
+| `GOVT`          | Government services      |
+| `HOTEL`         | Hotels & lodging         |
+| `HEALTH`        | Healthcare               |
+| `NONPROFIT`     | Non-profit organizations |
+| `PROF_SERVICES` | Professional services    |
+| `RETAIL`        | Retail & e-commerce      |
+| `TRAVEL`        | Travel & tourism         |
+| `RESTAURANT`    | Restaurants & dining     |
+| `OTHER`         | Other industries         |
 
 ### Update Profile Picture
 
@@ -1286,18 +1446,20 @@ To update your profile picture, you must first upload the image via the Media AP
 
 ```typescript
 // Step 1: Upload profile picture
-const mediaBuffer = fs.readFileSync('profile-picture.jpg');
-const uploadResult = await client.media.upload(mediaBuffer, 'image/jpeg');
+const mediaBuffer = fs.readFileSync("profile-picture.jpg");
+const uploadResult = await client.media.upload(mediaBuffer, "image/jpeg");
 
 // Step 2: Update profile with media handle
 await client.account.updateBusinessProfile({
-  messaging_product: 'whatsapp',
-  profile_picture_handle: uploadResult.id
+  messaging_product: "whatsapp",
+  profile_picture_handle: uploadResult.id,
 });
 
 // Step 3: Verify the update
-const updatedProfile = await client.account.getBusinessProfile(['profile_picture_url']);
-console.log('New profile picture:', updatedProfile.data[0].profile_picture_url);
+const updatedProfile = await client.account.getBusinessProfile([
+  "profile_picture_url",
+]);
+console.log("New profile picture:", updatedProfile.data[0].profile_picture_url);
 ```
 
 ### Best Practices
@@ -1316,6 +1478,61 @@ console.log('New profile picture:', updatedProfile.data[0].profile_picture_url);
 
 ---
 
+## 📞 Phone Number Management
+
+### Block/Unblock Numbers
+
+Block spam or unwanted numbers from contacting your business:
+
+```typescript
+// Block a number
+await client.account.blockPhoneNumber(
+  phoneNumberId,
+  '+1234567890'
+);
+console.log('Number blocked');
+
+// Unblock a number
+await client.account.unblockPhoneNumber(
+  phoneNumberId,
+  '+1234567890'
+);
+console.log('Number unblocked');
+```
+
+### Calling Settings
+
+Configure voice calling features:
+
+```typescript
+// Get current settings
+const settings = await client.account.getCallingSettings(phoneNumberId);
+console.log(`Calling enabled: ${settings.calling_enabled}`);
+
+// Enable voice calling
+await client.account.updateCallingSettings(phoneNumberId, {
+  calling_enabled: true,
+  calling_webhook_url: 'https://your-webhook.com/calls'
+});
+```
+
+### Compliance Information
+
+Access regulatory requirements for your region:
+
+```typescript
+// Get WABA-level compliance
+const wabaCompliance = await client.account.getComplianceInfo(wabaId);
+console.log(`Country: ${wabaCompliance.regulatory_info.country}`);
+console.log(`Requirements: ${wabaCompliance.regulatory_info.requirements.join(', ')}`);
+
+// Get phone-level compliance
+const phoneCompliance = await client.account.getPhoneComplianceInfo(phoneNumberId);
+console.log(`Category: ${phoneCompliance.compliance_category}`);
+```
+
+---
+
 ## 💬 Conversational Components
 
 Configure in-chat features to make it easier for WhatsApp users to interact with your business. Includes welcome messages, ice breakers (prompts), and slash commands.
@@ -1326,7 +1543,7 @@ Enable webhook notifications when users open chat for the first time:
 
 ```typescript
 await client.account.configureConversationalAutomation({
-  enableWelcomeMessage: true
+  enableWelcomeMessage: true,
 });
 ```
 
@@ -1338,16 +1555,12 @@ Set up tappable text strings that appear when users first chat with you:
 
 ```typescript
 await client.account.configureConversationalAutomation({
-  prompts: [
-    'Book a flight',
-    'Plan a vacation',
-    'Find hotels',
-    'Rent a car'
-  ]
+  prompts: ["Book a flight", "Plan a vacation", "Find hotels", "Rent a car"],
 });
 ```
 
 **Limits**:
+
 - Maximum 4 prompts
 - Maximum 80 characters per prompt
 - Emojis not supported
@@ -1360,22 +1573,23 @@ Set up commands that users can access by typing "/" in the chat:
 await client.account.configureConversationalAutomation({
   commands: [
     {
-      commandName: 'tickets',
-      commandDescription: 'Book flight tickets'
+      commandName: "tickets",
+      commandDescription: "Book flight tickets",
     },
     {
-      commandName: 'hotel',
-      commandDescription: 'Find and book hotels'
+      commandName: "hotel",
+      commandDescription: "Find and book hotels",
     },
     {
-      commandName: 'help',
-      commandDescription: 'Get help with our services'
-    }
-  ]
+      commandName: "help",
+      commandDescription: "Get help with our services",
+    },
+  ],
 });
 ```
 
 **Limits**:
+
 - Maximum 30 commands
 - Command name: Maximum 32 characters
 - Command description: Maximum 256 characters
@@ -1388,20 +1602,17 @@ You can configure multiple features in a single call:
 ```typescript
 await client.account.configureConversationalAutomation({
   enableWelcomeMessage: true,
-  prompts: [
-    'Book a flight',
-    'Plan a vacation'
-  ],
+  prompts: ["Book a flight", "Plan a vacation"],
   commands: [
     {
-      commandName: 'tickets',
-      commandDescription: 'Book flight tickets'
+      commandName: "tickets",
+      commandDescription: "Book flight tickets",
     },
     {
-      commandName: 'hotel',
-      commandDescription: 'Find and book hotels'
-    }
-  ]
+      commandName: "hotel",
+      commandDescription: "Find and book hotels",
+    },
+  ],
 });
 ```
 
@@ -1412,9 +1623,12 @@ Retrieve the current conversational components configuration:
 ```typescript
 const config = await client.account.getConversationalAutomation();
 
-console.log('Welcome enabled:', config.conversational_automation.enable_welcome_message);
-console.log('Prompts:', config.conversational_automation.prompts);
-console.log('Commands:', config.conversational_automation.commands);
+console.log(
+  "Welcome enabled:",
+  config.conversational_automation.enable_welcome_message,
+);
+console.log("Prompts:", config.conversational_automation.prompts);
+console.log("Commands:", config.conversational_automation.commands);
 
 // List all prompts
 config.conversational_automation.prompts?.forEach((prompt, index) => {
@@ -1442,6 +1656,246 @@ config.conversational_automation.commands?.forEach((cmd) => {
 
 ---
 
+## 📊 Analytics
+
+WhatsApp Business API provides comprehensive analytics to track messaging performance, conversation metrics, pricing, and template effectiveness.
+
+### Get Messaging Analytics
+
+Get the number of messages sent and delivered by phone numbers:
+
+```typescript
+const messaging = await client.analytics.getMessagingAnalytics({
+  start: 1656661480,
+  end: 1674859480,
+  granularity: 'DAY',
+  phone_numbers: ['+1234567890']
+});
+
+console.log(`Sent: ${messaging.analytics.data_points[0].sent}`);
+console.log(`Delivered: ${messaging.analytics.data_points[0].delivered}`);
+```
+
+**Parameters**:
+- `start` - Start date (UNIX timestamp) - Required
+- `end` - End date (UNIX timestamp) - Required  
+- `granularity` - `'HALF_HOUR'` | `'DAY'` | `'MONTH'` - Required
+- `phone_numbers` - Array of phone numbers to filter (optional)
+- `product_types` - Array of product types: `0` = notification, `2` = customer support (optional)
+- `country_codes` - Array of country codes to filter (optional)
+
+### Get Conversation Analytics
+
+Track conversation metrics with multiple dimensions for detailed insights:
+
+```typescript
+const conversations = await client.analytics.getConversationAnalytics({
+  start: 1656661480,
+  end: 1674859480,
+  granularity: 'DAILY',
+  conversation_types: ['REGULAR', 'FREE_TIER'],
+  conversation_directions: ['business_initiated'],
+  dimensions: ['conversation_type', 'conversation_direction']
+});
+
+conversations.conversation_analytics.data.forEach(group => {
+  group.data_points.forEach(point => {
+    console.log(`Type: ${point.conversation_type}, Count: ${point.conversation}`);
+  });
+});
+```
+
+**Parameters**:
+- `start` - Start date (UNIX timestamp) - Required
+- `end` - End date (UNIX timestamp) - Required
+- `granularity` - `'HALF_HOUR'` | `'DAILY'` | `'MONTHLY'` - Required
+- `conversation_types` - Filter by type (optional):
+  - `'REGULAR'` - Standard business-initiated conversations
+  - `'FREE_TIER'` - Free tier conversations
+  - `'FREE_ENTRY_POINT'` - Free entry point conversations
+  - `'REFERRAL_CONVERSION'` - Referral conversion conversations
+- `conversation_directions` - Filter by direction (optional):
+  - `'business_initiated'` - Conversations started by business
+  - `'user_initiated'` - Conversations started by users
+- `conversation_categories` - Filter by category (optional):
+  - `'AUTHENTICATION'` - Authentication conversations
+  - `'MARKETING'` - Marketing conversations  
+  - `'UTILITY'` - Utility conversations
+  - `'SERVICE'` - Service conversations
+- `dimensions` - Group results by (optional):
+  - `'conversation_type'`
+  - `'conversation_direction'`
+  - `'conversation_category'`
+  - `'country'`
+  - `'phone'`
+
+**Note**: When using dimensions, results are grouped accordingly for deeper analysis.
+
+### Get Pricing Analytics
+
+Track message costs with volume tier information for cost optimization:
+
+```typescript
+const pricing = await client.analytics.getPricingAnalytics({
+  start: 1656661480,
+  end: 1674859480,
+  granularity: 'DAILY',
+  dimensions: ['PRICING_CATEGORY', 'TIER', 'COUNTRY'],
+  country_codes: ['US', 'BR']
+});
+
+// Response includes tier information
+pricing.pricing_analytics.data[0].data_points.forEach(point => {
+  console.log(`Tier: ${point.tier}, Cost: ${point.cost} cents`);
+  // Example: "Tier: 0:750000, Cost: 2300 cents"
+  console.log(`Category: ${point.pricing_category}, Country: ${point.country}`);
+});
+```
+
+**Parameters**:
+- `start` - Start date (UNIX timestamp) - Required
+- `end` - End date (UNIX timestamp) - Required
+- `granularity` - `'DAILY'` | `'HALF_HOUR'` | `'MONTHLY'` - Required
+- `phone_numbers` - Array of phone numbers to filter (optional)
+- `country_codes` - Array of ISO 3166-1 alpha-2 country codes (optional)
+- `metric_types` - Metrics to retrieve (optional):
+  - `'COST'` - Message cost in cents
+  - `'VOLUME'` - Message volume
+- `pricing_types` - Filter by pricing type (optional):
+  - `'REGULAR'` - Regular pricing
+  - `'FREE_CUSTOMER_SERVICE'` - Free customer service window
+  - `'FREE_ENTRY_POINT'` - Free entry point
+- `pricing_categories` - Filter by category (optional):
+  - `'AUTHENTICATION'` - Authentication messages
+  - `'AUTHENTICATION_INTERNATIONAL'` - International authentication
+  - `'MARKETING'` - Marketing messages
+  - `'SERVICE'` - Service messages
+  - `'UTILITY'` - Utility messages
+  - `'REFERRAL_CONVERSION'` - Referral conversion
+- `dimensions` - Group results by (optional):
+  - `'COUNTRY'` - Group by country
+  - `'PHONE'` - Group by phone number
+  - `'PRICING_CATEGORY'` - Group by category
+  - `'PRICING_TYPE'` - Group by pricing type
+  - `'TIER'` - Group by volume tier
+
+**Volume Tiers**: Tier format is `"start:end"` (e.g., `"0:1000"`, `"1000:10000"`) or `"start:MAX"` for unlimited.
+
+### Get Template Analytics
+
+Track individual template performance including sent, delivered, read, and clicked metrics:
+
+```typescript
+const templates = await client.analytics.getTemplateAnalytics({
+  start: 1656661480,
+  end: 1674859480,
+  granularity: 'DAILY',
+  template_ids: ['template_id_1', 'template_id_2'],
+  metric_types: ['SENT', 'DELIVERED', 'READ', 'CLICKED']
+});
+
+// Response includes click and cost metrics
+templates.template_analytics.data[0].data_points.forEach(point => {
+  console.log(`Template: ${point.template_id}`);
+  console.log(`Sent: ${point.sent}, Delivered: ${point.delivered}`);
+  
+  // Click metrics (URL buttons)
+  point.clicked?.forEach(metric => {
+    console.log(`${metric.type}: ${metric.value} clicks`);
+    // Types: 'url_button', 'unique_url_button'
+  });
+  
+  // Cost metrics
+  point.cost?.forEach(metric => {
+    console.log(`${metric.type}: $${(metric.value / 100).toFixed(2)}`);
+    // Types: 'amount_spent', 'cost_per_delivered', 'cost_per_url_button_click'
+  });
+});
+```
+
+**Parameters**:
+- `start` - Start date (UNIX timestamp or `YYYY-MM-DD`) - Required
+- `end` - End date (UNIX timestamp or `YYYY-MM-DD`) - Required
+- `granularity` - `'DAILY'` | `'HALF_HOUR'` | `'MONTHLY'` - Required
+- `template_ids` - Array of template IDs (max 10) - Optional
+- `metric_types` - Metrics to retrieve (optional):
+  - `'COST'` - Cost metrics
+  - `'CLICKED'` - Click metrics
+  - `'DELIVERED'` - Delivery count
+  - `'READ'` - Read count
+  - `'SENT'` - Sent count
+
+**Click Metrics**:
+- `url_button` - Total URL button clicks
+- `unique_url_button` - Unique users who clicked URL buttons
+
+**Cost Metrics**:
+- `amount_spent` - Total amount spent (cents)
+- `cost_per_delivered` - Cost per delivered message (cents)
+- `cost_per_url_button_click` - Cost per URL button click (cents)
+
+### Get Template Group Analytics
+
+Get aggregated metrics for template groups (collection of related templates):
+
+```typescript
+const groups = await client.analytics.getTemplateGroupAnalytics({
+  start: '2024-01-01',
+  end: '2024-01-31',
+  granularity: 'daily',
+  template_group_ids: ['group_id_1'],
+  use_waba_timezone: true
+});
+
+console.log(`Timezone: ${groups.data[0].waba_timezone}`);
+groups.data[0].data_points.forEach(point => {
+  console.log(`Group: ${point.template_group_id}`);
+  console.log(`Sent: ${point.sent}, Delivered: ${point.delivered}`);
+  
+  // Similar click and cost metrics as template analytics
+  point.clicked?.forEach(metric => {
+    console.log(`Clicks: ${metric.value} (${metric.type})`);
+  });
+});
+```
+
+**Parameters**:
+- `start` - Start date (UNIX timestamp or `YYYY-MM-DD`) - Required
+- `end` - End date (UNIX timestamp or `YYYY-MM-DD`) - Required
+- `granularity` - Only `'daily'` supported - Required
+- `template_group_ids` - Array of template group IDs (max 10) - Required
+- `metric_types` - Metrics to retrieve (optional):
+  - `'cost'` - Cost metrics
+  - `'clicked'` - Click metrics
+  - `'delivered'` - Delivery count
+  - `'read'` - Read count
+  - `'sent'` - Sent count
+- `use_waba_timezone` - Use WABA timezone vs UTC (optional, default: `false`)
+
+**Note**: Template group analytics provides aggregated metrics across all templates in the group.
+
+### Important Limitations
+
+- **Lookback Window**: 
+  - Messaging/conversation/pricing analytics: Max 1 year (enforced from Dec 1, 2025)
+  - Template analytics: Max 90 days
+  - Template group analytics: Max 90 days
+- **Cost Metrics**: Not available for businesses billed through Solution Partners (after July 1, 2023)
+- **Regional**: Template analytics not supported for EU/UK/Japan WABAs
+- **Accuracy**: All analytics are approximate and may differ from invoices
+- **Template Prerequisites**: Must enable template analytics on WABA before use
+- **Date Format**: Accepts both UNIX timestamps and `YYYY-MM-DD` format for template analytics
+
+### Best Practices
+
+1. **Use Dimensions Wisely**: Group data by relevant dimensions for deeper insights
+2. **Monitor Volume Tiers**: Track pricing tiers to optimize costs
+3. **Template Performance**: Regularly review template click rates and costs
+4. **Time Granularity**: Use appropriate granularity (`HALF_HOUR` for real-time, `DAILY` for trends, `MONTHLY` for reports)
+5. **Stay Within Limits**: Respect lookback windows and regional restrictions
+
+---
+
 ## 🔧 Error Handling
 
 The SDK provides typed error classes for different scenarios:
@@ -1452,31 +1906,31 @@ import {
   ValidationError,
   NetworkError,
   RateLimitError,
-} from '@wazapin/wa-sdk';
+} from "@wazapin/wa-sdk";
 
 try {
   await client.messages.sendText({
-    to: '+1234567890',
-    text: 'Hello!',
+    to: "+1234567890",
+    text: "Hello!",
   });
 } catch (error) {
   if (error instanceof ValidationError) {
     // Invalid parameters
-    console.error('Validation failed:', error.message);
-    console.error('Failed field:', error.field);
+    console.error("Validation failed:", error.message);
+    console.error("Failed field:", error.field);
   } else if (error instanceof APIError) {
     // API returned an error
-    console.error('API Error:', error.statusCode, error.message);
-    console.error('Error code:', error.code);
+    console.error("API Error:", error.statusCode, error.message);
+    console.error("Error code:", error.code);
   } else if (error instanceof RateLimitError) {
     // Rate limit hit
-    console.error('Rate limited. Retry after:', error.retryAfter);
+    console.error("Rate limited. Retry after:", error.retryAfter);
   } else if (error instanceof NetworkError) {
     // Network issue
-    console.error('Network error:', error.message);
+    console.error("Network error:", error.message);
   } else {
     // Unknown error
-    console.error('Unknown error:', error);
+    console.error("Unknown error:", error);
   }
 }
 ```
@@ -1489,14 +1943,14 @@ The SDK automatically retries failed requests with exponential backoff:
 
 ```typescript
 const client = new WhatsAppClient({
-  accessToken: 'YOUR_TOKEN',
-  phoneNumberId: 'YOUR_PHONE_ID',
-  
+  accessToken: "YOUR_TOKEN",
+  phoneNumberId: "YOUR_PHONE_ID",
+
   retry: {
-    maxRetries: 3,           // Max number of retry attempts
-    initialDelay: 1000,      // Initial delay in ms
-    maxDelay: 10000,         // Maximum delay in ms
-    backoffMultiplier: 2,    // Multiply delay by this factor
+    maxRetries: 3, // Max number of retry attempts
+    initialDelay: 1000, // Initial delay in ms
+    maxDelay: 10000, // Maximum delay in ms
+    backoffMultiplier: 2, // Multiply delay by this factor
   },
 });
 
@@ -1517,7 +1971,7 @@ const client = new WhatsAppClient({
 ### Node.js
 
 ```typescript
-import { WhatsAppClient } from '@wazapin/wa-sdk';
+import { WhatsAppClient } from "@wazapin/wa-sdk";
 
 const client = new WhatsAppClient({
   accessToken: process.env.WHATSAPP_TOKEN!,
@@ -1528,18 +1982,18 @@ const client = new WhatsAppClient({
 ### Deno
 
 ```typescript
-import { WhatsAppClient } from 'npm:@wazapin/wa-sdk';
+import { WhatsAppClient } from "npm:@wazapin/wa-sdk";
 
 const client = new WhatsAppClient({
-  accessToken: Deno.env.get('WHATSAPP_TOKEN')!,
-  phoneNumberId: Deno.env.get('PHONE_NUMBER_ID')!,
+  accessToken: Deno.env.get("WHATSAPP_TOKEN")!,
+  phoneNumberId: Deno.env.get("PHONE_NUMBER_ID")!,
 });
 ```
 
 ### Bun
 
 ```typescript
-import { WhatsAppClient } from '@wazapin/wa-sdk';
+import { WhatsAppClient } from "@wazapin/wa-sdk";
 
 const client = new WhatsAppClient({
   accessToken: Bun.env.WHATSAPP_TOKEN!,
@@ -1550,11 +2004,11 @@ const client = new WhatsAppClient({
 ### Browser
 
 ```typescript
-import { WhatsAppClient } from '@wazapin/wa-sdk';
+import { WhatsAppClient } from "@wazapin/wa-sdk";
 
 const client = new WhatsAppClient({
-  accessToken: 'YOUR_TOKEN', // CAUTION: Don't expose tokens in frontend!
-  phoneNumberId: 'YOUR_PHONE_ID',
+  accessToken: "YOUR_TOKEN", // CAUTION: Don't expose tokens in frontend!
+  phoneNumberId: "YOUR_PHONE_ID",
 });
 
 // Note: For production, always proxy WhatsApp API requests through your backend
@@ -1613,35 +2067,42 @@ console.log('Flow published successfully');
 ```typescript
 // List all flows
 const flows = await client.flows.list();
-flows.data.forEach(flow => {
+flows.data.forEach((flow) => {
   console.log(`${flow.name} - ${flow.status}`);
-  console.log(`Categories: ${flow.categories.join(', ')}`);
+  console.log(`Categories: ${flow.categories.join(", ")}`);
 });
 
 // Get flow details with health status
-const flowDetails = await client.flows.get(
-  flowId,
-  ['id', 'name', 'status', 'health_status', 'validation_errors']
-);
+const flowDetails = await client.flows.get(flowId, [
+  "id",
+  "name",
+  "status",
+  "health_status",
+  "validation_errors",
+]);
 
-console.log('Can send:', flowDetails.health_status?.can_send_message);
+console.log("Can send:", flowDetails.health_status?.can_send_message);
 
 // Update flow metadata
 await client.flows.update(flowId, {
-  name: 'Updated Flow Name',
-  endpoint_uri: 'https://new-endpoint.com/webhook'
+  name: "Updated Flow Name",
+  endpoint_uri: "https://new-endpoint.com/webhook",
 });
 
 // Get preview URL for testing
 const preview = await client.flows.getPreview(flowId);
-console.log('Preview URL:', preview.preview?.preview_url);
-console.log('Expires at:', preview.preview?.expires_at);
+console.log("Preview URL:", preview.preview?.preview_url);
+console.log("Expires at:", preview.preview?.expires_at);
 
 // Deprecate an old flow
 await client.flows.deprecate(oldFlowId);
 
 // Delete a draft flow
 await client.flows.delete(draftFlowId);
+
+// Deprecate a published flow
+const result = await client.flows.deprecate(flowId);
+console.log(`Flow deprecated at ${new Date(result.deprecated_at * 1000)}`);
 ```
 
 ### Clone and Migrate Flows
@@ -1649,19 +2110,19 @@ await client.flows.delete(draftFlowId);
 ```typescript
 // Clone an existing flow
 const clonedFlow = await client.flows.create({
-  name: 'Cloned Flow',
-  categories: ['LEAD_GENERATION'],
-  clone_flow_id: 'original-flow-id'
+  name: "Cloned Flow",
+  categories: ["LEAD_GENERATION"],
+  clone_flow_id: "original-flow-id",
 });
 
 // Migrate flows between WABAs
 const result = await client.flows.migrate({
-  source_waba_id: 'source-waba-123',
-  source_flow_names: ['Flow 1', 'Flow 2']
+  source_waba_id: "source-waba-123",
+  source_flow_names: ["Flow 1", "Flow 2"],
 });
 
-console.log('Migrated:', result.migrated_flows.length);
-console.log('Failed:', result.failed_flows.length);
+console.log("Migrated:", result.migrated_flows.length);
+console.log("Failed:", result.failed_flows.length);
 ```
 
 ### Flow Analytics
@@ -1669,40 +2130,40 @@ console.log('Failed:', result.failed_flows.length);
 ```typescript
 // Get endpoint request count
 const requestMetrics = await client.flows.getAnalytics(flowId, {
-  metric_name: 'ENDPOINT_REQUEST_COUNT',
-  granularity: 'DAY',
-  since: '2024-01-01',
-  until: '2024-01-31'
+  metric_name: "ENDPOINT_REQUEST_COUNT",
+  granularity: "DAY",
+  since: "2024-01-01",
+  until: "2024-01-31",
 });
 
-requestMetrics.metric.data_points.forEach(point => {
+requestMetrics.metric.data_points.forEach((point) => {
   console.log(`${point.timestamp}: ${point.data[0].value} requests`);
 });
 
 // Get error rate
 const errorRate = await client.flows.getAnalytics(flowId, {
-  metric_name: 'ENDPOINT_REQUEST_ERROR_RATE',
-  granularity: 'LIFETIME',
-  since: '2024-01-01',
-  until: '2024-01-31'
+  metric_name: "ENDPOINT_REQUEST_ERROR_RATE",
+  granularity: "LIFETIME",
+  since: "2024-01-01",
+  until: "2024-01-31",
 });
 
-console.log('Error rate:', errorRate.metric.data_points[0].data[0].value);
+console.log("Error rate:", errorRate.metric.data_points[0].data[0].value);
 
 // Monitor endpoint latency
 const latency = await client.flows.getAnalytics(flowId, {
-  metric_name: 'ENDPOINT_REQUEST_LATENCY_SECONDS_CEIL',
-  granularity: 'DAY',
-  since: '2024-01-01',
-  until: '2024-01-31'
+  metric_name: "ENDPOINT_REQUEST_LATENCY_SECONDS_CEIL",
+  granularity: "DAY",
+  since: "2024-01-01",
+  until: "2024-01-31",
 });
 
 // Check endpoint availability
 const availability = await client.flows.getAnalytics(flowId, {
-  metric_name: 'ENDPOINT_AVAILABILITY',
-  granularity: 'DAY',
-  since: '2024-01-01',
-  until: '2024-01-31'
+  metric_name: "ENDPOINT_AVAILABILITY",
+  granularity: "DAY",
+  since: "2024-01-01",
+  until: "2024-01-31",
 });
 ```
 
@@ -1711,7 +2172,7 @@ const availability = await client.flows.getAnalytics(flowId, {
 ```typescript
 // Get Flow JSON download URL
 const assets = await client.flows.listAssets(flowId);
-assets.data.forEach(asset => {
+assets.data.forEach((asset) => {
   console.log(`${asset.name} (${asset.asset_type})`);
   console.log(`Download: ${asset.download_url}`);
 });
@@ -1724,20 +2185,20 @@ assets.data.forEach(asset => {
 ### Using Zod Schemas Directly
 
 ```typescript
-import { schemas } from '@wazapin/wa-sdk';
+import { schemas } from "@wazapin/wa-sdk";
 
 // Validate data manually
 const result = schemas.sendTextParamsSchema.safeParse({
-  to: '+1234567890',
-  text: 'Hello',
+  to: "+1234567890",
+  text: "Hello",
 });
 
 if (!result.success) {
-  console.error('Validation errors:', result.error);
+  console.error("Validation errors:", result.error);
 }
 
 // Use schemas for your own validation
-import { z } from 'zod';
+import { z } from "zod";
 
 const mySchema = z.object({
   textMessage: schemas.sendTextParamsSchema,
@@ -1750,15 +2211,15 @@ const mySchema = z.object({
 ```typescript
 // Useful for testing or adding custom middleware
 const customFetch = async (url: RequestInfo, init?: RequestInit) => {
-  console.log('Making request to:', url);
+  console.log("Making request to:", url);
   const response = await fetch(url, init);
-  console.log('Response status:', response.status);
+  console.log("Response status:", response.status);
   return response;
 };
 
 const client = new WhatsAppClient({
-  accessToken: 'YOUR_TOKEN',
-  phoneNumberId: 'YOUR_PHONE_ID',
+  accessToken: "YOUR_TOKEN",
+  phoneNumberId: "YOUR_PHONE_ID",
   fetch: customFetch,
 });
 ```
@@ -1772,8 +2233,9 @@ const client = new WhatsAppClient({
 The `WhatsAppClient` organizes methods into four namespaces:
 
 #### `client.messages.*`
+
 - `sendText()` - Send text messages
-- `sendImage()` - Send image messages  
+- `sendImage()` - Send image messages
 - `sendVideo()` - Send video messages
 - `sendAudio()` - Send audio messages
 - `sendDocument()` - Send document messages
@@ -1787,18 +2249,22 @@ The `WhatsAppClient` organizes methods into four namespaces:
 - `markAsRead()` - Mark message as read
 
 #### `client.media.*`
+
 - `upload()` - Upload media file
 - `download()` - Download media file
 - `getUrl()` - Get media URL and metadata
 
 #### `client.webhooks.*`
+
 - `parse()` - Parse webhook payload
 - `verify()` - Verify webhook signature
 
 #### `client.account.*`
+
 - `getMessagingLimit()` - Get current messaging limit tier
 
 #### `client.embeddedSignup.*`
+
 - `debugToken()` - Debug OAuth token to get shared WABA IDs
 - `listSharedWABAs()` - List client WABAs shared via embedded signup
 - `listOwnedWABAs()` - List owned/client WABAs with filtering
@@ -1831,37 +2297,38 @@ Always include the country code with `+` prefix:
 ```typescript
 // ✅ Good
 await client.messages.sendText({
-  to: '+1234567890', // Country code + number
-  text: 'Hello',
+  to: "+1234567890", // Country code + number
+  text: "Hello",
 });
 
 // ❌ Bad (may result in misdelivered messages)
 await client.messages.sendText({
-  to: '1234567890', // Missing +
-  text: 'Hello',
+  to: "1234567890", // Missing +
+  text: "Hello",
 });
 ```
 
 ### Media Expiration
 
 - **Uploaded media IDs**: Valid for 30 days
-- **Webhook media IDs**: Valid for 7 days  
+- **Webhook media IDs**: Valid for 7 days
 - **Media URLs**: Valid for 5 minutes only!
 
 ```typescript
 // Get URL
-const mediaInfo = await client.media.getUrl('MEDIA_ID');
+const mediaInfo = await client.media.getUrl("MEDIA_ID");
 
 // Use URL within 5 minutes
 const response = await fetch(mediaInfo.url);
 
 // After 5 minutes, get a new URL
-const newMediaInfo = await client.media.getUrl('MEDIA_ID');
+const newMediaInfo = await client.media.getUrl("MEDIA_ID");
 ```
 
 ### Rate Limits
 
 WhatsApp enforces rate limits. The SDK automatically handles rate limit errors by:
+
 1. Reading the `retry-after` header
 2. Waiting the specified time
 3. Retrying the request
@@ -1879,12 +2346,12 @@ import type {
   MessageResponse,
   WebhookEvent,
   MediaUploadResponse,
-} from '@wazapin/wa-sdk';
+} from "@wazapin/wa-sdk";
 
 // Full autocomplete and type checking
 const params: SendTextParams = {
-  to: '+1234567890',
-  text: 'Hello',
+  to: "+1234567890",
+  text: "Hello",
   previewUrl: true,
 };
 
@@ -1902,6 +2369,7 @@ Contributions are welcome! See our documentation for details:
 - 📊 **[Project Status](./docs/PROJECT_STATUS.md)** - Current progress and roadmap
 
 **Quick commands**:
+
 ```bash
 npm test              # Run tests
 npm run lint          # Lint code
@@ -1932,6 +2400,7 @@ Apart from the specific conditions mentioned above, all other rights and restric
 ## Links
 
 **Documentation**:
+
 - [Contributing Guide](./docs/CONTRIBUTING.md)
 - [API Verification](./docs/API_VERIFICATION.md)
 - [Project Status](./docs/PROJECT_STATUS.md)
@@ -1939,6 +2408,7 @@ Apart from the specific conditions mentioned above, all other rights and restric
 - [Changelog](./CHANGELOG.md)
 
 **WhatsApp Resources**:
+
 - [WhatsApp Business Platform](https://developers.facebook.com/docs/whatsapp)
 - [API Documentation](https://developers.facebook.com/docs/whatsapp/cloud-api)
 - [Get Started Guide](https://developers.facebook.com/docs/whatsapp/cloud-api/get-started)
@@ -1958,6 +2428,7 @@ Apart from the specific conditions mentioned above, all other rights and restric
 Built with ❤️ by the Wazapin team.
 
 Special thanks to:
+
 - [Meta WhatsApp Team](https://developers.facebook.com/docs/whatsapp) for the excellent API
 - [Zod](https://zod.dev/) for runtime validation
 - All contributors and users of this SDK
