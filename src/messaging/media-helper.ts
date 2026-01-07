@@ -1,4 +1,4 @@
-import type { WhatsAppClient } from "../client/index.js";
+import type { WhatsAppClient } from "../client/WhatsAppClient.js";
 import type { WebhookMedia } from "../types/webhooks.js";
 
 /**
