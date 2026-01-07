@@ -38,3 +38,55 @@ describe("WebhookMedia types", () => {
     expect(message.image?.url).toBeDefined();
   });
 });
+
+describe("Voice transcription types", () => {
+  it("should accept audio with voice=true and transcription", () => {
+    const message: WebhookMessage = {
+      id: "msg123",
+      from: "1234567890",
+      timestamp: "1704556800",
+      type: "audio",
+      audio: {
+        id: "voice123",
+        mimeType: "audio/ogg",
+        sha256: "hash",
+        url: "https://lookaside.fbsbx.com/...",
+        voice: true,
+        text: "Hello, this is a test message",
+      },
+    };
+    expect(message.audio?.voice).toBe(true);
+    expect(message.audio?.text).toBe("Hello, this is a test message");
+  });
+
+  it("should accept voice message without transcription", () => {
+    const message: WebhookMessage = {
+      id: "msg123",
+      from: "1234567890",
+      timestamp: "1704556800",
+      type: "audio",
+      audio: {
+        id: "voice123",
+        mimeType: "audio/ogg",
+        voice: true,
+      },
+    };
+    expect(message.audio?.voice).toBe(true);
+    expect(message.audio?.text).toBeUndefined();
+  });
+
+  it("should accept regular audio file (not voice)", () => {
+    const message: WebhookMessage = {
+      id: "msg123",
+      from: "1234567890",
+      timestamp: "1704556800",
+      type: "audio",
+      audio: {
+        id: "audio123",
+        mimeType: "audio/mp3",
+      },
+    };
+    expect(message.audio?.voice).toBeUndefined();
+    expect(message.audio?.text).toBeUndefined();
+  });
+});

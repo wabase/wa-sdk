@@ -27,6 +27,8 @@ export interface WebhookMedia {
   sha256?: string;
   caption?: string;
   filename?: string;
+  voice?: boolean; // true = voice message, false/undefined = audio file
+  text?: string; // Voice transcription (v23.0+, only for voice messages)
 }
 
 export interface WebhookLocation {
