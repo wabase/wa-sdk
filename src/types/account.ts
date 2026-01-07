@@ -254,3 +254,46 @@ export interface ConversationalAutomationResponse {
    */
   id: string;
 }
+
+/**
+ * Response from blocking a phone number
+ */
+export interface BlockResponse {
+  /**
+   * Success status
+   */
+  success: boolean;
+}
+
+/**
+ * Calling settings for WhatsApp Business Phone Number
+ */
+export interface CallingSettings {
+  /**
+   * Whether calling is enabled
+   */
+  is_enabled: boolean;
+}
+
+/**
+ * Parameters for updating calling settings
+ */
+export interface UpdateCallingSettingsParams {
+  /**
+   * Whether to enable calling
+   */
+  is_enabled: boolean;
+}
+
+/**
+ * Compliance information for WhatsApp Business Phone Number
+ */
+export interface ComplianceInfo {
+  /**
+   * Compliance data
+   */
+  data?: Array<{
+    compliance_category: string;
+    compliance_status: string;
+  }>;
+}

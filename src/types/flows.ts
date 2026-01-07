@@ -335,3 +335,21 @@ export interface SendFlowTemplateParams {
   flow_token?: string;
   flow_action_data?: Record<string, unknown>;
 }
+
+/**
+ * Flow deprecation response
+ */
+export interface FlowDeprecationResponse {
+  /**
+   * Success status
+   */
+  success: boolean;
+  /**
+   * Flow ID
+   */
+  flow_id: string;
+  /**
+   * Deprecated timestamp
+   */
+  deprecated_at: number;
+}

@@ -312,7 +312,7 @@ export class AnalyticsAPI {
     // Build query parameters (not Graph API fields!)
     const queryParams = new URLSearchParams();
 
-    queryParams.append('granularity', params.granularity);
+    queryParams.append('granularity', params.granularity ?? 'DAILY');
     queryParams.append('start', params.start.toString());
     queryParams.append('end', params.end.toString());
     queryParams.append('template_group_ids', JSON.stringify(params.template_group_ids));

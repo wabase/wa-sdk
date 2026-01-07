@@ -232,3 +232,158 @@ export interface ConversationAnalyticsResponse {
    */
   id: string;
 }
+
+/**
+ * Pricing analytics parameters
+ */
+export interface PricingAnalyticsParams {
+  /**
+   * Start date (UNIX timestamp)
+   */
+  start: number;
+  /**
+   * End date (UNIX timestamp)
+   */
+  end: number;
+  /**
+   * Granularity
+   */
+  granularity?: AnalyticsGranularity;
+  /**
+   * Phone numbers to filter
+   */
+  phone_numbers?: string[];
+  /**
+   * Country codes to filter
+   */
+  country_codes?: string[];
+  /**
+   * Metric types to filter
+   */
+  metric_types?: string[];
+  /**
+   * Pricing types to filter
+   */
+  pricing_types?: string[];
+  /**
+   * Pricing categories to filter
+   */
+  pricing_categories?: string[];
+  /**
+   * Dimensions to group by
+   */
+  dimensions?: string[];
+}
+
+/**
+ * Pricing analytics response
+ */
+export interface PricingAnalyticsResponse {
+  /**
+   * Pricing data
+   */
+  data: Array<{
+    start: number;
+    end: number;
+    cost?: number;
+    phone?: string;
+  }>;
+}
+
+/**
+ * Template analytics parameters
+ */
+export interface TemplateAnalyticsParams {
+  /**
+   * Start date (UNIX timestamp)
+   */
+  start: number;
+  /**
+   * End date (UNIX timestamp)
+   */
+  end: number;
+  /**
+   * Granularity
+   */
+  granularity?: AnalyticsGranularity;
+  /**
+   * Template names to filter
+   */
+  template_names?: string[];
+  /**
+   * Template IDs to filter
+   */
+  template_ids?: string[];
+  /**
+   * Metric types to filter
+   */
+  metric_types?: string[];
+}
+
+/**
+ * Template analytics response
+ */
+export interface TemplateAnalyticsResponse {
+  /**
+   * Template data
+   */
+  data: Array<{
+    start: number;
+    end: number;
+    sent?: number;
+    delivered?: number;
+    read?: number;
+    template_name?: string;
+  }>;
+}
+
+/**
+ * Template group analytics parameters
+ */
+export interface TemplateGroupAnalyticsParams {
+  /**
+   * Start date (UNIX timestamp)
+   */
+  start: number;
+  /**
+   * End date (UNIX timestamp)
+   */
+  end: number;
+  /**
+   * Granularity
+   */
+  granularity?: AnalyticsGranularity;
+  /**
+   * Template groups to filter
+   */
+  template_groups?: string[];
+  /**
+   * Template group IDs to filter
+   */
+  template_group_ids?: string[];
+  /**
+   * Metric types to filter
+   */
+  metric_types?: string[];
+  /**
+   * Use WABA timezone for date ranges
+   */
+  use_waba_timezone?: boolean;
+}
+
+/**
+ * Template group analytics response
+ */
+export interface TemplateGroupAnalyticsResponse {
+  /**
+   * Template group data
+   */
+  data: Array<{
+    start: number;
+    end: number;
+    sent?: number;
+    delivered?: number;
+    read?: number;
+    template_group?: string;
+  }>;
+}
