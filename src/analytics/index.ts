@@ -114,6 +114,17 @@ export class AnalyticsAPI {
   }
 
   /**
+   * Get conversation analytics.
+   *
+   * Alias for getConversationAnalyticsV2, matching the documented public API.
+   */
+  async getConversationAnalytics(
+    params: ConversationAnalyticsParams,
+  ): Promise<ConversationAnalyticsResponse> {
+    return this.getConversationAnalyticsV2(params);
+  }
+
+  /**
    * Get message analytics
    *
    * Retrieves message-level analytics including messages sent,
@@ -140,6 +151,15 @@ export class AnalyticsAPI {
     return this.httpClient.get<AnalyticsData>(
       `${this.wabaId}/analytics?${queryParams.toString()}`,
     );
+  }
+
+  /**
+   * Get messaging analytics.
+   *
+   * Alias for getMessageAnalytics, matching the documented public API.
+   */
+  async getMessagingAnalytics(params: AnalyticsParams): Promise<AnalyticsData> {
+    return this.getMessageAnalytics(params);
   }
 
   /**

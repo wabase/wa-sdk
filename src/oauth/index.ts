@@ -8,7 +8,7 @@
  * 
  * @example
  * ```typescript
- * import { OAuthHelper } from '@wazapin/wa-sdk';
+ * import { OAuthHelper } from '@wabase/wa-sdk';
  * 
  * const oauth = new OAuthHelper();
  * 
@@ -176,7 +176,7 @@ export class OAuthHelper {
    * @param inputToken - Token to debug
    * @param accessToken - Access token to authenticate the request
    */
-  async debugToken(inputToken: string, accessToken: string) {
+  async debugToken(inputToken: string, accessToken: string): ReturnType<typeof debugToken> {
     return debugToken(inputToken, accessToken, {
       apiVersion: this.defaultApiVersion,
       fetch: this.customFetch,

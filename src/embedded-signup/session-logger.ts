@@ -8,7 +8,7 @@
  * 
  * @example
  * ```typescript
- * import { createSessionLogger } from '@wazapin/wa-sdk';
+ * import { createSessionLogger } from '@wabase/wa-sdk';
  * 
  * // In your React component
  * useEffect(() => {
@@ -54,6 +54,35 @@ export interface SessionLoggerConfig {
   debug?: boolean;
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
+}
+
+function parseUnknownSessionEvent(data: unknown): EmbeddedSignupSessionEvent | null {
+  const parsed: unknown = typeof data === 'string' ? JSON.parse(data) : data;
+
+  if (isRecord(parsed) && parsed.type === 'WA_EMBEDDED_SIGNUP') {
+    return parsed as unknown as EmbeddedSignupSessionEvent;
+  }
+
+  return null;
+}
+
+function reportAsyncCallbackError(callbackResult: void | Promise<void>, label: string): void {
+  if (callbackResult instanceof Promise) {
+    void callbackResult.catch((err: unknown) => {
+      console.error(`[SessionLogger] ${label} callback error:`, err);
+    });
+  }
+}
+
+function debugLog(enabled: boolean, message: string, data?: unknown): void {
+  if (enabled) {
+    // eslint-disable-next-line no-console -- Optional frontend debugging helper.
+    console.log(message, data);
+  }
+}
+
 /**
  * Create a message event handler for Meta Embedded Signup session logging
  * 
@@ -69,32 +98,27 @@ export function createSessionLogger(config: SessionLoggerConfig): (event: Messag
       return;
     }
 
-    let data: EmbeddedSignupSessionEvent;
+    let data: EmbeddedSignupSessionEvent | null;
 
     try {
-      // Parse the event data (can be string or object)
-      data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+      data = parseUnknownSessionEvent(event.data);
     } catch {
       // Non-JSON message from Facebook, ignore
-      if (debug) {
-        console.log('[SessionLogger] Non-JSON message:', event.data);
-      }
+      debugLog(debug, '[SessionLogger] Non-JSON message:', event.data);
       return;
     }
 
     // Only handle WA_EMBEDDED_SIGNUP events
-    if (data?.type !== 'WA_EMBEDDED_SIGNUP') {
+    if (!data) {
       return;
     }
 
-    if (debug) {
-      console.log('[SessionLogger] Received event:', data);
-    }
+    debugLog(debug, '[SessionLogger] Received event:', data);
 
     // Call raw event handler
     if (onEvent) {
       try {
-        onEvent(data);
+        reportAsyncCallbackError(onEvent(data), 'onEvent');
       } catch (err) {
         console.error('[SessionLogger] onEvent error:', err);
       }
@@ -107,24 +131,20 @@ export function createSessionLogger(config: SessionLoggerConfig): (event: Messag
 
       if (eventData && 'error_message' in eventData && 'error_id' in eventData) {
         // User reported an error
-        if (debug) {
-          console.log('[SessionLogger] Error reported:', eventData);
-        }
+        debugLog(debug, '[SessionLogger] Error reported:', eventData);
         if (onError) {
           try {
-            onError(eventData as EmbeddedSignupErrorData, data);
+            reportAsyncCallbackError(onError(eventData, data), 'onError');
           } catch (err) {
             console.error('[SessionLogger] onError callback error:', err);
           }
         }
       } else if (eventData && 'current_step' in eventData) {
         // User abandoned the flow
-        if (debug) {
-          console.log('[SessionLogger] Flow abandoned at:', (eventData as EmbeddedSignupCancelData).current_step);
-        }
+        debugLog(debug, '[SessionLogger] Flow abandoned at:', eventData.current_step);
         if (onCancel) {
           try {
-            onCancel(eventData as EmbeddedSignupCancelData, data);
+            reportAsyncCallbackError(onCancel(eventData, data), 'onCancel');
           } catch (err) {
             console.error('[SessionLogger] onCancel callback error:', err);
           }
@@ -137,17 +157,15 @@ export function createSessionLogger(config: SessionLoggerConfig): (event: Messag
     ) {
       // Successful completion
       const successData = data.data as EmbeddedSignupSuccessData;
-      if (debug) {
-        console.log('[SessionLogger] Signup completed:', {
+      debugLog(debug, '[SessionLogger] Signup completed:', {
           event: data.event,
           wabaId: successData?.waba_id,
           phoneNumberId: successData?.phone_number_id,
           businessId: successData?.business_id,
         });
-      }
       if (onSuccess && successData) {
         try {
-          onSuccess(successData, data);
+          reportAsyncCallbackError(onSuccess(successData, data), 'onSuccess');
         } catch (err) {
           console.error('[SessionLogger] onSuccess callback error:', err);
         }
@@ -169,11 +187,7 @@ export function parseSessionEvent(event: MessageEvent): EmbeddedSignupSessionEve
   }
 
   try {
-    const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
-    
-    if (data?.type === 'WA_EMBEDDED_SIGNUP') {
-      return data as EmbeddedSignupSessionEvent;
-    }
+    return parseUnknownSessionEvent(event.data);
   } catch {
     // Non-JSON message
   }

@@ -354,8 +354,6 @@ async function testAccountAPI() {
     console.log(`   WABA: ${waba.name || waba.id}`);
   });
 
-  // Skipping methods that need additional implementation
-
   // Conversational Automation
   await runTest("Account", "Get Conversational Automation", async () => {
     const config_data = await client.account.getConversationalAutomation();
@@ -364,7 +362,7 @@ async function testAccountAPI() {
     );
   });
 
-  // Note: Some account methods skipped as they need additional implementation
+  // Note: State-changing account methods are intentionally omitted from this smoke test.
 }
 
 // ============================================================================
@@ -520,11 +518,11 @@ async function testFlowsAPI() {
 }
 
 // ============================================================================
-// ANALYTICS API - 4 Endpoints
+// ANALYTICS API - 4 Checks
 // ============================================================================
 
 async function testAnalyticsAPI() {
-  console.log("\n📊 Testing Analytics API (4 endpoints)...\n");
+  console.log("\n📊 Testing Analytics API (4 checks)...\n");
 
   const now = new Date();
   const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
@@ -557,15 +555,21 @@ async function testAnalyticsAPI() {
     });
   });
 
-  // Note: getPhoneNumberAnalytics may not be available in all SDK versions
+  await runTest("Analytics", "Get Pricing Analytics", async () => {
+    await client.analytics.getPricingAnalytics({
+      start: Math.floor(thirtyDaysAgo.getTime() / 1000),
+      end: Math.floor(now.getTime() / 1000),
+      granularity: "DAILY",
+    });
+  });
 }
 
 // ============================================================================
-// MEDIA API - 3 Endpoints
+// MEDIA API - 4 Endpoints
 // ============================================================================
 
 async function testMediaAPI() {
-  console.log("\n📎 Testing Media API (3 endpoints)...\n");
+  console.log("\n📎 Testing Media API (4 endpoints)...\n");
 
   let uploadedMediaId: string;
 
@@ -607,6 +611,18 @@ async function testMediaAPI() {
             : mediaData.data.byteLength
           : "unknown";
         console.log(`   Downloaded ${dataLength} bytes`);
+      }
+    },
+    !uploadedMediaId,
+  );
+
+  await runTest(
+    "Media",
+    "Delete Media",
+    async () => {
+      if (uploadedMediaId) {
+        await client.media.delete(uploadedMediaId);
+        console.log(`   Deleted Media ID: ${uploadedMediaId}`);
       }
     },
     !uploadedMediaId,

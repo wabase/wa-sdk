@@ -7,6 +7,7 @@
  * @module embedded-signup/flow
  * @see https://developers.facebook.com/docs/whatsapp/embedded-signup
  */
+/* eslint-disable no-console, @typescript-eslint/explicit-function-return-type -- This helper intentionally reports onboarding progress to the CLI. */
 
 import type {
     CompleteOnboardingParams,

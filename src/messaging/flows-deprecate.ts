@@ -28,7 +28,7 @@ export async function deprecateFlow(
   client: HTTPClient,
   flowId: string
 ): Promise<FlowDeprecationResponse> {
-  const response = await client.post<{ success: boolean }>(
+  const response = await client.post<{ success: boolean; deprecated_at?: number }>(
     `/${flowId}/deprecate`,
     {}
   );
@@ -36,6 +36,6 @@ export async function deprecateFlow(
   return {
     success: response.success,
     flow_id: flowId,
-    deprecated_at: Date.now(),
+    deprecated_at: response.deprecated_at ?? Date.now(),
   } satisfies FlowDeprecationResponse;
 }

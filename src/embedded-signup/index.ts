@@ -8,7 +8,7 @@
  * 
  * @example
  * ```typescript
- * import { EmbeddedSignupFlow, OAuthHelper } from '@wazapin/wa-sdk';
+ * import { EmbeddedSignupFlow, OAuthHelper } from '@wabase/wa-sdk';
  * 
  * // Step 1: Generate signup URL
  * const oauth = new OAuthHelper();
@@ -68,4 +68,3 @@ export {
     isErrorEvent,
     type SessionLoggerConfig,
 } from './session-logger.js';
-

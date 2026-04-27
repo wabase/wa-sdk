@@ -1,11 +1,11 @@
-# @wazapin/wa-sdk
+# @wabase/wa-sdk
 
 > TypeScript SDK for WhatsApp Business Cloud API - Production-ready with gold standard quality
 
-[![npm version](https://img.shields.io/npm/v/@wazapin/wa-sdk.svg)](https://www.npmjs.com/package/@wazapin/wa-sdk)
+[![npm version](https://img.shields.io/npm/v/@wabase/wa-sdk.svg)](https://www.npmjs.com/package/@wabase/wa-sdk)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3+-blue.svg)](https://www.typescriptlang.org/)
-[![Test Coverage](https://img.shields.io/badge/tests-521%20passing-brightgreen.svg)](./coverage)
+[![Test Coverage](https://img.shields.io/badge/tests-626%20passing-brightgreen.svg)](./coverage)
 
 A modern, type-safe TypeScript SDK for the WhatsApp Business Cloud API. Built with developer experience in mind, featuring full TypeScript support, runtime validation, automatic retries, and cross-platform compatibility.
 
@@ -17,7 +17,7 @@ A modern, type-safe TypeScript SDK for the WhatsApp Business Cloud API. Built wi
 - **Cross-Platform** - Works in Node.js, Deno, Bun, and browsers
 - **Tree-Shakeable** - Pure ESM modules for optimal bundle size
 - **Complete API Coverage** - All message types, media, webhooks, and more
-- **Well Tested** - 521 comprehensive unit tests (100% implementation coverage)
+- **Well Tested** - 626 comprehensive unit tests
 - **Framework Agnostic** - No dependencies on specific frameworks
 - **Secure** - Built-in webhook signature verification
 - **Great DX** - Intuitive API with clear error messages
@@ -28,16 +28,16 @@ A modern, type-safe TypeScript SDK for the WhatsApp Business Cloud API. Built wi
 
 ```bash
 # npm
-npm install @wazapin/wa-sdk
+npm install @wabase/wa-sdk
 
 # pnpm
-pnpm add @wazapin/wa-sdk
+pnpm add @wabase/wa-sdk
 
 # yarn
-yarn add @wazapin/wa-sdk
+yarn add @wabase/wa-sdk
 
 # bun
-bun add @wazapin/wa-sdk
+bun add @wabase/wa-sdk
 ```
 
 ---
@@ -47,7 +47,7 @@ bun add @wazapin/wa-sdk
 ### 1. Initialize the Client
 
 ```typescript
-import { WhatsAppClient } from "@wazapin/wa-sdk";
+import { WhatsAppClient } from "@wabase/wa-sdk";
 
 const client = new WhatsAppClient({
   accessToken: "YOUR_ACCESS_TOKEN",
@@ -193,7 +193,7 @@ const prodClient = new WhatsAppClient({
 });
 
 // Custom logger handler
-import { WazapinLogger } from "@wazapin/wa-sdk";
+import { WazapinLogger } from "@wabase/wa-sdk";
 
 const customLogger = new WazapinLogger({
   level: "info",
@@ -611,13 +611,16 @@ await client.messages.sendImage({
 // Get media URL and metadata
 const mediaInfo = await client.media.getUrl("MEDIA_ID");
 console.log("URL:", mediaInfo.url); // Valid for 5 minutes
-console.log("MIME Type:", mediaInfo.mime_type);
-console.log("File Size:", mediaInfo.file_size);
+console.log("MIME Type:", mediaInfo.mimeType);
+console.log("File Size:", mediaInfo.fileSize);
 
 // Download media directly
 const downloadResponse = await client.media.download("MEDIA_ID");
 console.log("Buffer:", downloadResponse.buffer);
 console.log("MIME Type:", downloadResponse.mimeType);
+
+// Delete media when you no longer need it
+await client.media.delete("MEDIA_ID");
 ```
 
 ### Media File Limits
@@ -641,7 +644,7 @@ Onboard businesses to WhatsApp Cloud API using the Embedded Signup flow.
 The SDK now provides high-level helpers that reduce 30+ lines of manual code to just a few lines:
 
 ```typescript
-import { OAuthHelper, EmbeddedSignupFlow } from "@wazapin/wa-sdk";
+import { OAuthHelper, EmbeddedSignupFlow } from "@wabase/wa-sdk";
 
 // Step 1: Generate signup URL (frontend/API)
 const oauth = new OAuthHelper();
@@ -687,7 +690,7 @@ import {
   OAuthHelper,
   generateSignupUrl,
   parseCallbackUrl,
-} from "@wazapin/wa-sdk";
+} from "@wabase/wa-sdk";
 
 const oauth = new OAuthHelper();
 
@@ -796,7 +799,7 @@ result.phoneRegistered; // Whether phone was registered
 For more control, you can use individual methods:
 
 ```typescript
-import { WhatsAppClient } from "@wazapin/wa-sdk";
+import { WhatsAppClient } from "@wabase/wa-sdk";
 
 const client = new WhatsAppClient({
   phoneNumberId: "your-phone-id",
@@ -952,7 +955,7 @@ console.log("Namespace:", ns.message_template_namespace);
 ### Parse Webhook Events
 
 ```typescript
-import { WebhookEvent } from "@wazapin/wa-sdk";
+import { WebhookEvent } from "@wabase/wa-sdk";
 
 // In your webhook endpoint
 app.post("/webhook", async (req, res) => {
@@ -1080,7 +1083,7 @@ if (event.type === 'account_update') {
 #### Media URL Auto-Fallback (v23.0+ optimization)
 
 ```typescript
-import { getMediaUrl } from '@wazapin/wa-sdk';
+import { getMediaUrl } from '@wabase/wa-sdk';
 
 // Parse webhook
 const event = client.webhooks.parse(req.body);
@@ -1193,7 +1196,7 @@ console.log("Phone number ID:", limit.id);
 ### Understanding Tier Values
 
 ```typescript
-import type { MessagingLimitTier } from "@wazapin/wa-sdk";
+import type { MessagingLimitTier } from "@wabase/wa-sdk";
 
 const limit = await client.account.getMessagingLimit();
 
@@ -1668,18 +1671,18 @@ Get the number of messages sent and delivered by phone numbers:
 const messaging = await client.analytics.getMessagingAnalytics({
   start: 1656661480,
   end: 1674859480,
-  granularity: 'DAY',
+  granularity: 'DAILY',
   phone_numbers: ['+1234567890']
 });
 
-console.log(`Sent: ${messaging.analytics.data_points[0].sent}`);
-console.log(`Delivered: ${messaging.analytics.data_points[0].delivered}`);
+console.log(`Sent: ${messaging.data[0].sent}`);
+console.log(`Delivered: ${messaging.data[0].delivered}`);
 ```
 
 **Parameters**:
 - `start` - Start date (UNIX timestamp) - Required
 - `end` - End date (UNIX timestamp) - Required  
-- `granularity` - `'HALF_HOUR'` | `'DAY'` | `'MONTH'` - Required
+- `granularity` - `'DAILY'` | `'MONTHLY'` - Optional
 - `phone_numbers` - Array of phone numbers to filter (optional)
 - `product_types` - Array of product types: `0` = notification, `2` = customer support (optional)
 - `country_codes` - Array of country codes to filter (optional)
@@ -1693,7 +1696,7 @@ const conversations = await client.analytics.getConversationAnalytics({
   start: 1656661480,
   end: 1674859480,
   granularity: 'DAILY',
-  conversation_types: ['REGULAR', 'FREE_TIER'],
+  conversation_types: ['regular', 'free_tier'],
   conversation_directions: ['business_initiated'],
   dimensions: ['conversation_type', 'conversation_direction']
 });
@@ -1708,24 +1711,21 @@ conversations.conversation_analytics.data.forEach(group => {
 **Parameters**:
 - `start` - Start date (UNIX timestamp) - Required
 - `end` - End date (UNIX timestamp) - Required
-- `granularity` - `'HALF_HOUR'` | `'DAILY'` | `'MONTHLY'` - Required
+- `granularity` - `'DAILY'` | `'MONTHLY'` - Optional
 - `conversation_types` - Filter by type (optional):
-  - `'REGULAR'` - Standard business-initiated conversations
-  - `'FREE_TIER'` - Free tier conversations
-  - `'FREE_ENTRY_POINT'` - Free entry point conversations
-  - `'REFERRAL_CONVERSION'` - Referral conversion conversations
+  - `'regular'` - Standard conversations
+  - `'free_tier'` - Free tier conversations
+  - `'free_entry_point'` - Free entry point conversations
+  - `'authentication'` - Authentication conversations
+  - `'marketing'` - Marketing conversations
+  - `'utility'` - Utility conversations
+  - `'service'` - Service conversations
 - `conversation_directions` - Filter by direction (optional):
   - `'business_initiated'` - Conversations started by business
   - `'user_initiated'` - Conversations started by users
-- `conversation_categories` - Filter by category (optional):
-  - `'AUTHENTICATION'` - Authentication conversations
-  - `'MARKETING'` - Marketing conversations  
-  - `'UTILITY'` - Utility conversations
-  - `'SERVICE'` - Service conversations
 - `dimensions` - Group results by (optional):
   - `'conversation_type'`
   - `'conversation_direction'`
-  - `'conversation_category'`
   - `'country'`
   - `'phone'`
 
@@ -1755,7 +1755,7 @@ pricing.pricing_analytics.data[0].data_points.forEach(point => {
 **Parameters**:
 - `start` - Start date (UNIX timestamp) - Required
 - `end` - End date (UNIX timestamp) - Required
-- `granularity` - `'DAILY'` | `'HALF_HOUR'` | `'MONTHLY'` - Required
+- `granularity` - `'DAILY'` | `'MONTHLY'` - Optional
 - `phone_numbers` - Array of phone numbers to filter (optional)
 - `country_codes` - Array of ISO 3166-1 alpha-2 country codes (optional)
 - `metric_types` - Metrics to retrieve (optional):
@@ -1906,7 +1906,7 @@ import {
   ValidationError,
   NetworkError,
   RateLimitError,
-} from "@wazapin/wa-sdk";
+} from "@wabase/wa-sdk";
 
 try {
   await client.messages.sendText({
@@ -1971,7 +1971,7 @@ const client = new WhatsAppClient({
 ### Node.js
 
 ```typescript
-import { WhatsAppClient } from "@wazapin/wa-sdk";
+import { WhatsAppClient } from "@wabase/wa-sdk";
 
 const client = new WhatsAppClient({
   accessToken: process.env.WHATSAPP_TOKEN!,
@@ -1982,7 +1982,7 @@ const client = new WhatsAppClient({
 ### Deno
 
 ```typescript
-import { WhatsAppClient } from "npm:@wazapin/wa-sdk";
+import { WhatsAppClient } from "npm:@wabase/wa-sdk";
 
 const client = new WhatsAppClient({
   accessToken: Deno.env.get("WHATSAPP_TOKEN")!,
@@ -1993,7 +1993,7 @@ const client = new WhatsAppClient({
 ### Bun
 
 ```typescript
-import { WhatsAppClient } from "@wazapin/wa-sdk";
+import { WhatsAppClient } from "@wabase/wa-sdk";
 
 const client = new WhatsAppClient({
   accessToken: Bun.env.WHATSAPP_TOKEN!,
@@ -2004,7 +2004,7 @@ const client = new WhatsAppClient({
 ### Browser
 
 ```typescript
-import { WhatsAppClient } from "@wazapin/wa-sdk";
+import { WhatsAppClient } from "@wabase/wa-sdk";
 
 const client = new WhatsAppClient({
   accessToken: "YOUR_TOKEN", // CAUTION: Don't expose tokens in frontend!
@@ -2102,7 +2102,7 @@ await client.flows.delete(draftFlowId);
 
 // Deprecate a published flow
 const result = await client.flows.deprecate(flowId);
-console.log(`Flow deprecated at ${new Date(result.deprecated_at * 1000)}`);
+console.log("Deprecated:", result.success);
 ```
 
 ### Clone and Migrate Flows
@@ -2167,6 +2167,20 @@ const availability = await client.flows.getAnalytics(flowId, {
 });
 ```
 
+### Flow Endpoint Encryption
+
+```typescript
+// Set the public key used by WhatsApp to encrypt Flow data channel payloads
+await client.flows.setEncryptionPublicKey(
+  "PHONE_NUMBER_ID",
+  "-----BEGIN PUBLIC KEY-----\n...\n-----END PUBLIC KEY-----",
+);
+
+// Read the configured public key
+const encryption = await client.flows.getEncryptionPublicKey("PHONE_NUMBER_ID");
+console.log(encryption.business_public_key);
+```
+
 ### List Flow Assets
 
 ```typescript
@@ -2185,7 +2199,7 @@ assets.data.forEach((asset) => {
 ### Using Zod Schemas Directly
 
 ```typescript
-import { schemas } from "@wazapin/wa-sdk";
+import { schemas } from "@wabase/wa-sdk";
 
 // Validate data manually
 const result = schemas.sendTextParamsSchema.safeParse({
@@ -2346,7 +2360,7 @@ import type {
   MessageResponse,
   WebhookEvent,
   MediaUploadResponse,
-} from "@wazapin/wa-sdk";
+} from "@wabase/wa-sdk";
 
 // Full autocomplete and type checking
 const params: SendTextParams = {

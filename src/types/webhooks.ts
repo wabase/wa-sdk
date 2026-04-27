@@ -673,7 +673,7 @@ export interface WebhookEntry {
   changes: WebhookChange[];
 }
 
-export interface WebhookEvent {
+export interface WebhookEvent extends Record<string, unknown> {
   object: "whatsapp_business_account";
   entry: WebhookEntry[];
 }

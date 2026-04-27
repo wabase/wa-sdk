@@ -1,5 +1,5 @@
 /**
- * Type exports for @wazapin/wa-sdk
+ * Type exports for @wabase/wa-sdk
  */
 
 // Common types
@@ -13,7 +13,7 @@ export type {
   CurrencyParameter,
   DateTimeParameter,
   InteractiveHeader,
-} from './common.js';
+} from "./common.js";
 
 // Message types
 export type {
@@ -45,7 +45,7 @@ export type {
   InteractiveCTAHeader,
   InteractiveCTAAction,
   SendInteractiveCTAParams,
-} from './messages.js';
+} from "./messages.js";
 
 // Response types
 export type {
@@ -54,7 +54,7 @@ export type {
   MediaDownloadResponse,
   MediaUrlResponse,
   SuccessResponse,
-} from './responses.js';
+} from "./responses.js";
 
 // Webhook types
 export type {
@@ -65,11 +65,33 @@ export type {
   WebhookInteractive,
   WebhookMessage,
   WebhookStatus,
+  WebhookField,
+  MessagesWebhookValue,
+  AccountAlertsWebhookValue,
+  AccountReviewUpdateWebhookValue,
+  AccountUpdateWebhookValue,
+  BusinessCapabilityUpdateWebhookValue,
+  PhoneNumberNameUpdateWebhookValue,
+  PhoneNumberQualityUpdateWebhookValue,
+  SecurityWebhookValue,
+  MessageTemplateStatusUpdateWebhookValue,
+  MessageTemplateQualityUpdateWebhookValue,
+  MessageTemplateComponentsUpdateWebhookValue,
+  TemplateCategoryUpdateWebhookValue,
+  HistoryWebhookValue,
+  PartnerSolutionsWebhookValue,
+  PaymentConfigurationUpdateWebhookValue,
+  SmbAppStateSyncWebhookValue,
+  SmbMessageEchoesWebhookValue,
+  UserPreferencesWebhookValue,
+  AutomaticEventsWebhookValue,
+  WebhookChange,
+  WebhookEntry,
   MessageWebhookEvent,
   StatusWebhookEvent,
   AccountWebhookEvent,
   WebhookEvent,
-} from './webhooks.js';
+} from "./webhooks.js";
 
 // Error types
 export {
@@ -78,17 +100,17 @@ export {
   ValidationError,
   NetworkError,
   RateLimitError,
-} from './errors.js';
+} from "./errors.js";
 
 // Configuration types
 export type {
   RetryConfig,
   ValidationMode,
   WhatsAppClientConfig,
-} from './config.js';
+} from "./config.js";
 
 // Media types
-export type { MediaType, MediaFile, MediaMetadata } from './media.js';
+export type { MediaType, MediaFile, MediaMetadata } from "./media.js";
 
 // Account types
 export type {
@@ -103,7 +125,7 @@ export type {
   ConversationalAutomationConfig,
   ConfigureConversationalAutomationParams,
   ConversationalAutomationResponse,
-} from './account.js';
+} from "./account.js";
 
 // Phone Numbers types
 export type {
@@ -117,19 +139,16 @@ export type {
   SetTwoStepPinParams,
   DisplayNameStatusResponse,
   PhoneNumberFilterParams,
-} from './phone-numbers.js';
+} from "./phone-numbers.js";
 
 // Registration types
 export type {
   RegisterPhoneParams,
   RegistrationResponse,
-} from './registration.js';
+} from "./registration.js";
 
 // WABA types
-export type {
-  WABADetails,
-  WABAListResponse,
-} from './waba.js';
+export type { WABADetails, WABAListResponse } from "./waba.js";
 
 // Template types
 export type {
@@ -149,7 +168,7 @@ export type {
   CreateCatalogTemplateParams,
   EditTemplateParams,
   TemplateCreateResponse,
-} from './template.js';
+} from "./template.js";
 
 // Commerce types
 export type {
@@ -158,7 +177,7 @@ export type {
   SendMultiProductParams,
   SendCatalogParams,
   SendCatalogTemplateParams,
-} from './commerce.js';
+} from "./commerce.js";
 
 // QR Codes types
 export type {
@@ -169,20 +188,17 @@ export type {
   QRCodeCreateResponse,
   UpdateQRCodeParams,
   QRCodeImageURLResponse,
-} from './qr-codes.js';
+} from "./qr-codes.js";
 
 // Commerce Settings types
 export type {
   CommerceSettings,
   UpdateCommerceSettingsParams,
   CommerceSettingsResponse,
-} from './commerce-settings.js';
+} from "./commerce-settings.js";
 
 // Block Users types
-export type {
-  BlockedUser,
-  BlockedUsersListResponse,
-} from './block-users.js';
+export type { BlockedUser, BlockedUsersListResponse } from "./block-users.js";
 
 // Analytics types
 export type {
@@ -197,7 +213,7 @@ export type {
   ConversationAnalyticsParams,
   ConversationAnalyticsDataPoint,
   ConversationAnalyticsResponse,
-} from './analytics.js';
+} from "./analytics.js";
 
 // Business Accounts types
 export type {
@@ -207,20 +223,20 @@ export type {
   ExtendedCreditsResponse,
   GetBusinessAccountOptions,
   ListExtendedCreditsOptions,
-} from './business-accounts.js';
+} from "./business-accounts.js";
 
 // Two-Step Verification types
 export type {
   SetTwoStepVerificationRequest,
   SetTwoStepVerificationResponse,
-} from './two-step-verification.js';
+} from "./two-step-verification.js";
 
 // Shared WABAs types
 export type {
   SharedWABA,
   SharedWABAsResponse,
   ListSharedWABAsOptions,
-} from './shared-wabas.js';
+} from "./shared-wabas.js";
 
 // Embedded Signup types
 export type {
@@ -244,7 +260,7 @@ export type {
   PhoneNumberFilterOptions,
   PhoneNumberCertificate,
   TemplateNamespaceResponse as EmbeddedSignupTemplateNamespace,
-} from './embedded-signup.js';
+} from "./embedded-signup.js";
 
 // Flows types
 export type {
@@ -280,7 +296,8 @@ export type {
   FlowTemplateButton,
   CreateFlowTemplateParams,
   SendFlowTemplateParams,
-} from './flows.js';
+  FlowEncryptionPublicKeyResponse,
+} from "./flows.js";
 
 // Embedded Signup Session types (for postMessage events)
 export type {
@@ -292,10 +309,10 @@ export type {
   EmbeddedSignupStep,
   FBLoginResponse,
   FBLoginOptions,
-} from './embedded-signup-session.js';
+} from "./embedded-signup-session.js";
 
 export {
   isSuccessData,
   isCancelData,
   isErrorData,
-} from './embedded-signup-session.js';
+} from "./embedded-signup-session.js";

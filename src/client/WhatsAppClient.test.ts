@@ -102,6 +102,7 @@ describe('WhatsAppClient', () => {
       expect(client.media.upload).toBeDefined();
       expect(client.media.download).toBeDefined();
       expect(client.media.getUrl).toBeDefined();
+      expect(client.media.delete).toBeDefined();
     });
   });
 

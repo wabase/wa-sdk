@@ -5,9 +5,9 @@
 
 import type {
   WebhookEvent,
-  WebhookEntry,
-  WebhookChange,
   WebhookField,
+  WebhookMessage,
+  WebhookStatus,
   MessagesWebhookValue,
   AccountAlertsWebhookValue,
   AccountReviewUpdateWebhookValue,
@@ -98,8 +98,8 @@ export function parseWebhook(payload: unknown, validator?: Validator): WebhookEv
 export function getChangesByField<T extends WebhookField>(
   event: WebhookEvent,
   field: T
-): Array<{ wabaId: string; time?: number; value: WebhookValueType<T> }> {
-  const results: Array<{ wabaId: string; time?: number; value: WebhookValueType<T> }> = [];
+): WebhookChangeResult<T> {
+  const results: WebhookChangeResult<T> = [];
 
   for (const entry of event.entry) {
     for (const change of entry.changes) {
@@ -150,7 +150,7 @@ export function getFields(event: WebhookEvent): WebhookField[] {
 /**
  * Get messages from a webhook event (convenience helper)
  */
-export function getMessages(event: WebhookEvent) {
+export function getMessages(event: WebhookEvent): WebhookMessage[] {
   const changes = getChangesByField(event, 'messages');
   return changes.flatMap((c) => c.value.messages || []);
 }
@@ -158,51 +158,98 @@ export function getMessages(event: WebhookEvent) {
 /**
  * Get statuses from a webhook event (convenience helper)
  */
-export function getStatuses(event: WebhookEvent) {
+export function getStatuses(event: WebhookEvent): WebhookStatus[] {
   const changes = getChangesByField(event, 'messages');
   return changes.flatMap((c) => c.value.statuses || []);
 }
 
 /**
+ * Get reaction messages from a webhook event
+ */
+export function getReactions(event: WebhookEvent): WebhookMessage[] {
+  return getMessages(event).filter((message) => message.type === 'reaction');
+}
+
+/**
  * Get account alerts from a webhook event
  */
-export function getAccountAlerts(event: WebhookEvent) {
+export function getAccountAlerts(event: WebhookEvent): WebhookChangeResult<'account_alerts'> {
   return getChangesByField(event, 'account_alerts');
 }
 
 /**
  * Get account review updates from a webhook event
  */
-export function getAccountReviewUpdates(event: WebhookEvent) {
+export function getAccountReviewUpdates(
+  event: WebhookEvent
+): WebhookChangeResult<'account_review_update'> {
   return getChangesByField(event, 'account_review_update');
 }
 
 /**
  * Get account updates from a webhook event
  */
-export function getAccountUpdates(event: WebhookEvent) {
+export function getAccountUpdates(event: WebhookEvent): WebhookChangeResult<'account_update'> {
   return getChangesByField(event, 'account_update');
+}
+
+/**
+ * Get business capability updates from a webhook event
+ */
+export function getBusinessCapabilityUpdates(
+  event: WebhookEvent
+): WebhookChangeResult<'business_capability_update'> {
+  return getChangesByField(event, 'business_capability_update');
+}
+
+/**
+ * Get phone number name updates from a webhook event
+ */
+export function getPhoneNumberNameUpdates(
+  event: WebhookEvent
+): WebhookChangeResult<'phone_number_name_update'> {
+  return getChangesByField(event, 'phone_number_name_update');
 }
 
 /**
  * Get template status updates from a webhook event
  */
-export function getTemplateStatusUpdates(event: WebhookEvent) {
+export function getTemplateStatusUpdates(
+  event: WebhookEvent
+): WebhookChangeResult<'message_template_status_update'> {
   return getChangesByField(event, 'message_template_status_update');
+}
+
+/**
+ * Get template quality updates from a webhook event
+ */
+export function getTemplateQualityUpdates(
+  event: WebhookEvent
+): WebhookChangeResult<'message_template_quality_update'> {
+  return getChangesByField(event, 'message_template_quality_update');
 }
 
 /**
  * Get security events from a webhook event
  */
-export function getSecurityEvents(event: WebhookEvent) {
+export function getSecurityEvents(event: WebhookEvent): WebhookChangeResult<'security'> {
   return getChangesByField(event, 'security');
 }
 
 /**
  * Get phone number quality updates from a webhook event
  */
-export function getPhoneNumberQualityUpdates(event: WebhookEvent) {
+export function getPhoneNumberQualityUpdates(
+  event: WebhookEvent
+): WebhookChangeResult<'phone_number_quality_update'> {
   return getChangesByField(event, 'phone_number_quality_update');
+}
+
+/**
+ * Get user preference updates from a webhook event
+ */
+export function getUserPreferences(event: WebhookEvent): WebhookChangeResult<'user_preferences'> {
+  return getChangesByField(event, 'user_preferences');
 }
 
 /**
@@ -247,3 +294,9 @@ type WebhookValueType<T extends WebhookField> = T extends 'messages'
                                     : T extends 'automatic_events'
                                       ? AutomaticEventsWebhookValue
                                       : never;
+
+type WebhookChangeResult<T extends WebhookField> = Array<{
+  wabaId: string;
+  time?: number;
+  value: WebhookValueType<T>;
+}>;

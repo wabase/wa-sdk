@@ -481,6 +481,40 @@ describe('FlowsAPI', () => {
     });
   });
 
+  describe('encryption public key', () => {
+    const phoneNumberId = '111222333';
+
+    it('should get encryption public key', async () => {
+      const mockResponse = {
+        business_public_key: '-----BEGIN PUBLIC KEY-----test-----END PUBLIC KEY-----',
+      };
+
+      vi.mocked(mockClient.get).mockResolvedValue(mockResponse);
+
+      const result = await flows.getEncryptionPublicKey(phoneNumberId);
+
+      expect(mockClient.get).toHaveBeenCalledWith(
+        `/${phoneNumberId}/whatsapp_business_encryption`
+      );
+      expect(result).toEqual(mockResponse);
+    });
+
+    it('should set encryption public key', async () => {
+      const publicKey = '-----BEGIN PUBLIC KEY-----test-----END PUBLIC KEY-----';
+      const mockResponse = { success: true };
+
+      vi.mocked(mockClient.post).mockResolvedValue(mockResponse);
+
+      const result = await flows.setEncryptionPublicKey(phoneNumberId, publicKey);
+
+      expect(mockClient.post).toHaveBeenCalledWith(
+        `/${phoneNumberId}/whatsapp_business_encryption`,
+        { business_public_key: publicKey }
+      );
+      expect(result).toEqual(mockResponse);
+    });
+  });
+
   describe('send', () => {
     const phoneNumberId = '111222333';
 

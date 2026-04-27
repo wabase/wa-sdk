@@ -106,7 +106,7 @@ export class TemplateManagementAPI {
   async createAuthenticationTemplate(
     params: CreateAuthTemplateParams,
   ): Promise<TemplateCreateResponse> {
-    const components: any[] = [
+    const components: CreateTemplateParams['components'] = [
       {
         type: 'BODY',
         text: '*{{1}}* is your verification code. For your security, do not share this code.',
@@ -164,7 +164,7 @@ export class TemplateManagementAPI {
   async createCatalogTemplate(
     params: CreateCatalogTemplateParams,
   ): Promise<TemplateCreateResponse> {
-    const components: any[] = [];
+    const components: CreateTemplateParams['components'] = [];
 
     if (params.header_text) {
       components.push({

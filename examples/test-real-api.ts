@@ -128,7 +128,7 @@ async function testMessaging() {
   await runTest("Messaging", "Send Text Message", async () => {
     const response = await client.messages.sendText({
       to: config.testRecipient,
-      text: "🧪 Test message from @wazapin/wa-sdk",
+      text: "Test message from @wabase/wa-sdk",
       previewUrl: true,
     });
     console.log(`   Message ID: ${response.messages[0].id}`);
@@ -195,7 +195,7 @@ async function testMessaging() {
         type: "text",
         text: "Interactive Test",
       },
-      footer: "Powered by @wazapin/wa-sdk",
+      footer: "Powered by @wabase/wa-sdk",
     });
   });
 

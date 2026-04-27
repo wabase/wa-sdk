@@ -121,4 +121,38 @@ describe("AnalyticsAPI", () => {
       expect(capturedEndpoint).toContain("start=2025-01-01T00%3A00%3A00Z");
     });
   });
+
+  describe("documented aliases", () => {
+    it("should expose getMessagingAnalytics as an alias for message analytics", async () => {
+      let capturedEndpoint = '';
+      mockHttpClient.get = async (endpoint: string) => {
+        capturedEndpoint = endpoint;
+        return { data: [] };
+      };
+
+      await analyticsAPI.getMessagingAnalytics({
+        start: 1609459200,
+        end: 1609545600,
+      });
+
+      expect(capturedEndpoint).toContain(`${testWabaId}/analytics`);
+    });
+
+    it("should expose getConversationAnalytics as an alias for conversation analytics", async () => {
+      let capturedEndpoint = '';
+      mockHttpClient.get = async (endpoint: string) => {
+        capturedEndpoint = endpoint;
+        return { conversation_analytics: { data: [] }, id: testWabaId };
+      };
+
+      await analyticsAPI.getConversationAnalytics({
+        start: 1609459200,
+        end: 1609545600,
+        granularity: "DAILY",
+      });
+
+      expect(capturedEndpoint).toContain(`${testWabaId}?fields=`);
+      expect(capturedEndpoint).toContain("conversation_analytics");
+    });
+  });
 });

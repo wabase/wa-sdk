@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { downloadMedia, getMediaUrl } from './download.js';
+import { deleteMedia, downloadMedia, getMediaUrl } from './download.js';
 import { HTTPClient } from '../client/http.js';
 import type { MediaUrlResponse, MediaDownloadResponse } from '../types/responses.js';
 
@@ -255,6 +255,20 @@ describe('Media Download', () => {
       await expect(downloadMedia(mockClient, 'media123')).rejects.toThrow(
         'Media download failed'
       );
+    });
+  });
+
+  describe('deleteMedia', () => {
+    it('should delete media by ID', async () => {
+      const mockDelete = vi.fn().mockResolvedValue({ success: true });
+      mockClient = {
+        delete: mockDelete,
+      } as unknown as HTTPClient;
+
+      const result = await deleteMedia(mockClient, 'media123');
+
+      expect(mockDelete).toHaveBeenCalledWith('media123');
+      expect(result).toEqual({ success: true });
     });
   });
 });

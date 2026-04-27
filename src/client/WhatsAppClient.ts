@@ -1,12 +1,17 @@
 /**
  * Main WhatsApp Client class
  */
+/* eslint-disable @typescript-eslint/explicit-function-return-type -- Namespace methods are typed by the public properties above. */
 
 import type {
     BusinessProfileResponse,
+    BlockResponse,
+    CallingSettings,
+    ComplianceInfo,
     ConfigureConversationalAutomationParams,
     ConversationalAutomationResponse,
     MessagingLimitResponse,
+    UpdateCallingSettingsParams,
     UpdateBusinessProfileParams,
     UpdateBusinessProfileResponse,
 } from '../types/account.js';
@@ -81,7 +86,7 @@ import { sendTemplate } from '../messages/template.js';
 import { sendText } from '../messages/text.js';
 
 // Import media functions
-import { downloadMedia, getMediaUrl } from '../media/download.js';
+import { deleteMedia, downloadMedia, getMediaUrl } from '../media/download.js';
 import { uploadMedia } from '../media/upload.js';
 
 // Import webhook functions
@@ -96,6 +101,9 @@ import {
     getMessagingLimit,
     updateBusinessProfile,
 } from '../account/index.js';
+import { blockPhoneNumber, unblockPhoneNumber } from '../account/block.js';
+import { getCallingSettings, updateCallingSettings } from '../account/calling-settings.js';
+import { getComplianceInfo, getPhoneComplianceInfo } from '../account/compliance.js';
 
 /**
  * WhatsApp Business Cloud API Client
@@ -140,6 +148,7 @@ export class WhatsAppClient {
     upload: (file: Buffer | Blob, mimeType: string) => Promise<MediaUploadResponse>;
     download: (mediaId: string) => Promise<MediaDownloadResponse>;
     getUrl: (mediaId: string) => Promise<MediaUrlResponse>;
+    delete: (mediaId: string) => Promise<SuccessResponse>;
   };
 
   /**
@@ -163,6 +172,15 @@ export class WhatsAppClient {
       config: ConfigureConversationalAutomationParams
     ) => Promise<{ success: boolean }>;
     getConversationalAutomation: () => Promise<ConversationalAutomationResponse>;
+    getCallingSettings: (phoneNumberId?: string) => Promise<CallingSettings>;
+    updateCallingSettings: (
+      params: UpdateCallingSettingsParams,
+      phoneNumberId?: string
+    ) => Promise<CallingSettings>;
+    getComplianceInfo: (wabaId: string) => Promise<ComplianceInfo>;
+    getPhoneComplianceInfo: (phoneNumberId?: string) => Promise<ComplianceInfo>;
+    blockPhoneNumber: (phoneNumber: string, phoneNumberId?: string) => Promise<BlockResponse>;
+    unblockPhoneNumber: (phoneNumber: string, phoneNumberId?: string) => Promise<BlockResponse>;
   };
 
   /**
@@ -339,6 +357,7 @@ export class WhatsAppClient {
         this.withRetryWrapper(() => uploadMedia(this.client, this.phoneNumberId, file, mimeType)),
       download: (mediaId) => this.withRetryWrapper(() => downloadMedia(this.client, mediaId)),
       getUrl: (mediaId) => this.withRetryWrapper(() => getMediaUrl(this.client, mediaId)),
+      delete: (mediaId) => this.withRetryWrapper(() => deleteMedia(this.client, mediaId)),
     };
 
     // Initialize webhooks namespace
@@ -370,6 +389,18 @@ export class WhatsAppClient {
         this.withRetryWrapper(() =>
           getConversationalAutomation(this.client, this.phoneNumberId, this.validator)
         ),
+      getCallingSettings: (phoneNumberId = this.phoneNumberId) =>
+        this.withRetryWrapper(() => getCallingSettings(this.client, phoneNumberId)),
+      updateCallingSettings: (params, phoneNumberId = this.phoneNumberId) =>
+        this.withRetryWrapper(() => updateCallingSettings(this.client, phoneNumberId, params)),
+      getComplianceInfo: (wabaId) =>
+        this.withRetryWrapper(() => getComplianceInfo(this.client, wabaId)),
+      getPhoneComplianceInfo: (phoneNumberId = this.phoneNumberId) =>
+        this.withRetryWrapper(() => getPhoneComplianceInfo(this.client, phoneNumberId)),
+      blockPhoneNumber: (phoneNumber, phoneNumberId = this.phoneNumberId) =>
+        this.withRetryWrapper(() => blockPhoneNumber(this.client, phoneNumberId, phoneNumber)),
+      unblockPhoneNumber: (phoneNumber, phoneNumberId = this.phoneNumberId) =>
+        this.withRetryWrapper(() => unblockPhoneNumber(this.client, phoneNumberId, phoneNumber)),
     };
 
     // Initialize new API classes

@@ -1,5 +1,5 @@
 {
-  "name": "@wazapin/wa-sdk",
+  "name": "@wabase/wa-sdk",
   "version": "2.2.0",
   "description": "TypeScript SDK for WhatsApp Business Cloud API - Gold standard quality like Stripe, Twilio, Supabase",
   "type": "module",
@@ -47,7 +47,7 @@
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",
-    "@wazapin:registry": "https://npm.pkg.github.com"
+    "@wabase:registry": "https://npm.pkg.github.com"
   },
   "engines": {
     "node": ">=18.0.0"

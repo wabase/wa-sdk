@@ -17,6 +17,7 @@ import type {
   FlowMigrationResult,
   FlowAnalyticsParams,
   FlowAnalyticsResponse,
+  FlowEncryptionPublicKeyResponse,
   SendFlowParams,
 } from '../types/flows.js';
 import type { MessageResponse } from '../types/responses.js';
@@ -164,6 +165,32 @@ export class FlowsAPI {
     };
 
     return this.client.get<FlowAnalyticsResponse>(`/${flowId}`, queryParams);
+  }
+
+  /**
+   * Get the public key used for WhatsApp Flows data channel encryption
+   * @see https://developers.facebook.com/docs/whatsapp/flows/guides/implementingyourflowendpoint
+   */
+  async getEncryptionPublicKey(
+    phoneNumberId: string
+  ): Promise<FlowEncryptionPublicKeyResponse> {
+    return this.client.get<FlowEncryptionPublicKeyResponse>(
+      `/${phoneNumberId}/whatsapp_business_encryption`
+    );
+  }
+
+  /**
+   * Set the public key used for WhatsApp Flows data channel encryption
+   * @see https://developers.facebook.com/docs/whatsapp/flows/guides/implementingyourflowendpoint
+   */
+  async setEncryptionPublicKey(
+    phoneNumberId: string,
+    businessPublicKey: string
+  ): Promise<FlowSuccessResponse> {
+    return this.client.post<FlowSuccessResponse>(
+      `/${phoneNumberId}/whatsapp_business_encryption`,
+      { business_public_key: businessPublicKey }
+    );
   }
 
   /**

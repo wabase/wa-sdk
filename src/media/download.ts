@@ -3,7 +3,11 @@
  */
 
 import type { HTTPClient } from '../client/http.js';
-import type { MediaDownloadResponse, MediaUrlResponse } from '../types/responses.js';
+import type {
+  MediaDownloadResponse,
+  MediaUrlResponse,
+  SuccessResponse,
+} from '../types/responses.js';
 
 /**
  * Get media URL from WhatsApp
@@ -81,4 +85,18 @@ export async function downloadMedia(
     sha256: mediaInfo.sha256,
     fileSize: mediaInfo.fileSize,
   };
+}
+
+/**
+ * Delete media from WhatsApp
+ *
+ * @param client - HTTP client instance
+ * @param mediaId - Media ID to delete
+ * @returns Success response
+ */
+export async function deleteMedia(
+  client: HTTPClient,
+  mediaId: string
+): Promise<SuccessResponse> {
+  return client.delete<SuccessResponse>(mediaId);
 }

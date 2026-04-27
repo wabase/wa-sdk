@@ -256,6 +256,13 @@ export interface FlowAnalyticsParams {
 }
 
 /**
+ * Flow encryption public key response
+ */
+export interface FlowEncryptionPublicKeyResponse {
+  business_public_key: string;
+}
+
+/**
  * Flow message action type
  */
 export type FlowAction = 'navigate' | 'data_exchange';

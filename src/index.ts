@@ -1,5 +1,5 @@
 /**
- * @wazapin/wa-sdk
+ * @wabase/wa-sdk
  *
  * TypeScript SDK for WhatsApp Business Cloud API
  * Gold standard quality - Framework & Runtime Agnostic

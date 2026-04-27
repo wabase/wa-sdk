@@ -73,7 +73,9 @@ export class WazapinLogger {
     this.level = config?.level || 'info';
     this.timestamp = config?.timestamp || false;
     this.handler = config?.handler || {
+      // eslint-disable-next-line no-console -- Default logger delegates to the host console.
       debug: console.debug.bind(console),
+      // eslint-disable-next-line no-console -- Default logger delegates to the host console.
       info: console.info.bind(console),
       warn: console.warn.bind(console),
       error: console.error.bind(console),

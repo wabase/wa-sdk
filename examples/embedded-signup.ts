@@ -1,5 +1,5 @@
 /**
- * Example: WhatsApp Embedded Signup with @wazapin/wa-sdk
+ * Example: WhatsApp Embedded Signup with @wabase/wa-sdk
  * 
  * This example demonstrates how to implement the complete WhatsApp Embedded Signup
  * flow using the SDK's new OAuth and EmbeddedSignupFlow modules.
@@ -12,7 +12,7 @@ import {
   OAuthHelper,
   EmbeddedSignupFlow,
   WhatsAppClient,
-} from '@wazapin/wa-sdk';
+} from '@wabase/wa-sdk';
 
 // =============================================================================
 // Configuration (store these in environment variables!)

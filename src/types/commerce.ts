@@ -117,6 +117,6 @@ export interface SendCatalogTemplateParams {
    */
   components?: Array<{
     type: string;
-    parameters?: any[];
+    parameters?: unknown[];
   }>;
 }

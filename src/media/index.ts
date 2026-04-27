@@ -3,4 +3,4 @@
  */
 
 export { uploadMedia } from './upload.js';
-export { downloadMedia, getMediaUrl } from './download.js';
+export { deleteMedia, downloadMedia, getMediaUrl } from './download.js';

@@ -49,6 +49,10 @@ export interface SDKMetadata {
 // Cache for SDK metadata (performance optimization)
 let cachedMetadata: SDKMetadata | null = null;
 
+function isPackageMetadata(value: unknown): value is { version?: string } {
+  return typeof value === 'object' && value !== null;
+}
+
 /**
  * Get SDK version from package.json
  * @returns SDK version string
@@ -62,9 +66,13 @@ export function getSDKVersion(): string {
 
     // Read package.json from project root
     const packageJsonPath = join(currentDir, '..', '..', 'package.json');
-    const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
+    const packageJson: unknown = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
 
-    return packageJson.version || '1.0.0';
+    if (isPackageMetadata(packageJson) && typeof packageJson.version === 'string') {
+      return packageJson.version;
+    }
+
+    return '1.0.0';
   } catch {
     // Fallback version if package.json cannot be read
     return '1.0.0';
