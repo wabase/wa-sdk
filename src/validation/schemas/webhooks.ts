@@ -3,7 +3,7 @@
  * Based on: https://developers.facebook.com/docs/whatsapp/cloud-api/webhooks/reference
  */
 
-import { z } from 'zod';
+import { z } from "zod";
 
 // ============================================================================
 // Common Schemas
@@ -38,9 +38,15 @@ export const webhookLocationSchema = z.object({
 });
 
 export const webhookInteractiveSchema = z.object({
-  type: z.enum(['button_reply', 'list_reply']),
+  type: z.enum(["button_reply", "list_reply"]),
   buttonReply: z.object({ id: z.string(), title: z.string() }).optional(),
-  listReply: z.object({ id: z.string(), title: z.string(), description: z.string().optional() }).optional(),
+  listReply: z
+    .object({
+      id: z.string(),
+      title: z.string(),
+      description: z.string().optional(),
+    })
+    .optional(),
 });
 
 export const webhookErrorSchema = z.object({
@@ -59,9 +65,21 @@ export const webhookMessageSchema = z.object({
   from: z.string(),
   timestamp: z.string(),
   type: z.enum([
-    'text', 'image', 'video', 'audio', 'document', 'sticker', 'location',
-    'contacts', 'button', 'interactive', 'order', 'system', 'reaction',
-    'unsupported', 'unknown',
+    "text",
+    "image",
+    "video",
+    "audio",
+    "document",
+    "sticker",
+    "location",
+    "contacts",
+    "button",
+    "interactive",
+    "order",
+    "system",
+    "reaction",
+    "unsupported",
+    "unknown",
   ]),
   context: z.object({ from: z.string(), id: z.string() }).optional(),
   errors: z.array(webhookErrorSchema).optional(),
@@ -81,23 +99,27 @@ export const webhookMessageSchema = z.object({
 
 export const webhookStatusSchema = z.object({
   id: z.string(),
-  status: z.enum(['sent', 'delivered', 'read', 'failed']),
+  status: z.enum(["sent", "delivered", "read", "failed"]),
   timestamp: z.string(),
   recipientId: z.string(),
-  conversation: z.object({
-    id: z.string(),
-    origin: z.object({ type: z.string() }),
-  }).optional(),
-  pricing: z.object({
-    pricingModel: z.string(),
-    billable: z.boolean(),
-    category: z.string(),
-  }).optional(),
+  conversation: z
+    .object({
+      id: z.string(),
+      origin: z.object({ type: z.string() }),
+    })
+    .optional(),
+  pricing: z
+    .object({
+      pricingModel: z.string(),
+      billable: z.boolean(),
+      category: z.string(),
+    })
+    .optional(),
   errors: z.array(webhookErrorSchema).optional(),
 });
 
 export const messagesWebhookValueSchema = z.object({
-  messagingProduct: z.literal('whatsapp'),
+  messagingProduct: z.literal("whatsapp"),
   metadata: webhookMetadataSchema,
   contacts: z.array(webhookContactSchema).optional(),
   messages: z.array(webhookMessageSchema).optional(),
@@ -110,18 +132,18 @@ export const messagesWebhookValueSchema = z.object({
 // ============================================================================
 
 export const accountAlertsWebhookValueSchema = z.object({
-  entityType: z.enum(['BUSINESS', 'PHONE_NUMBER', 'CURRENT_STATUS_ID']),
+  entityType: z.enum(["BUSINESS", "PHONE_NUMBER", "CURRENT_STATUS_ID"]),
   entityId: z.string(),
   alertInfo: z.object({
-    alertSeverity: z.enum(['CRITICAL', 'INFORMATIONAL', 'WARNING']),
-    alertStatus: z.enum(['ACTIVE', 'NONE']),
+    alertSeverity: z.enum(["CRITICAL", "INFORMATIONAL", "WARNING"]),
+    alertStatus: z.enum(["ACTIVE", "NONE"]),
     alertType: z.enum([
-      'INCREASED_CAPABILITIES_ELIGIBILITY_DEFERRED',
-      'INCREASED_CAPABILITIES_ELIGIBILITY_FAILED',
-      'INCREASED_CAPABILITIES_ELIGIBILITY_NEED_MORE_INFO',
-      'OBA_APPROVED',
-      'OBA_REJECTED',
-      'PROFILE_PICTURE_LOST',
+      "INCREASED_CAPABILITIES_ELIGIBILITY_DEFERRED",
+      "INCREASED_CAPABILITIES_ELIGIBILITY_FAILED",
+      "INCREASED_CAPABILITIES_ELIGIBILITY_NEED_MORE_INFO",
+      "OBA_APPROVED",
+      "OBA_REJECTED",
+      "PROFILE_PICTURE_LOST",
     ]),
     alertDescription: z.string(),
   }),
@@ -132,7 +154,7 @@ export const accountAlertsWebhookValueSchema = z.object({
 // ============================================================================
 
 export const accountReviewUpdateWebhookValueSchema = z.object({
-  decision: z.enum(['APPROVED', 'REJECTED', 'PENDING', 'DEFERRED']),
+  decision: z.enum(["APPROVED", "REJECTED", "PENDING", "DEFERRED"]),
 });
 
 // ============================================================================
@@ -141,47 +163,80 @@ export const accountReviewUpdateWebhookValueSchema = z.object({
 
 export const accountUpdateWebhookValueSchema = z.object({
   event: z.enum([
-    'ACCOUNT_DELETED', 'ACCOUNT_VIOLATION', 'AD_ACCOUNT_LINKED',
-    'AUTH_INTL_PRICE_ELIGIBILITY_UPDATE', 'DISABLED_UPDATE', 'MM_LITE_TERMS_SIGNED',
-    'PARTNER_ADDED', 'PARTNER_APP_INSTALLED', 'PARTNER_APP_UNINSTALLED',
-    'PARTNER_CLIENT_CERTIFICATION_STATUS_UPDATE', 'BUSINESS_PRIMARY_LOCATION_COUNTRY_UPDATE',
-    'VOLUME_BASED_PRICING_TIER_UPDATE',
+    "ACCOUNT_DELETED",
+    "ACCOUNT_VIOLATION",
+    "AD_ACCOUNT_LINKED",
+    "AUTH_INTL_PRICE_ELIGIBILITY_UPDATE",
+    "DISABLED_UPDATE",
+    "MM_LITE_TERMS_SIGNED",
+    "PARTNER_ADDED",
+    "PARTNER_APP_INSTALLED",
+    "PARTNER_APP_UNINSTALLED",
+    "PARTNER_CLIENT_CERTIFICATION_STATUS_UPDATE",
+    "BUSINESS_PRIMARY_LOCATION_COUNTRY_UPDATE",
+    "VOLUME_BASED_PRICING_TIER_UPDATE",
   ]),
-  violationInfo: z.object({
-    violationType: z.enum(['ADULT', 'ILLEGAL', 'SPAM', 'SCAM', 'PHISHING', 'MALWARE', 'HARASSMENT', 'IMPERSONATION', 'OTHER']),
-  }).optional(),
-  banInfo: z.object({
-    wabaBanState: z.enum(['SCHEDULE_FOR_DISABLE', 'DISABLE', 'REINSTATE']),
-    wabaBanDate: z.string().optional(),
-  }).optional(),
-  wabaInfo: z.object({
-    wabaId: z.string(),
-    ownerBusinessId: z.string(),
-    adAccountLinked: z.string().optional(),
-    partnerAppId: z.string().optional(),
-    solutionId: z.string().optional(),
-    solutionPartnerBusinessIds: z.array(z.string()).optional(),
-  }).optional(),
-  authInternationalRateEligibility: z.object({
-    startTime: z.number(),
-    exceptionCountries: z.array(z.object({
-      countryCode: z.string(),
+  violationInfo: z
+    .object({
+      violationType: z.enum([
+        "ADULT",
+        "ILLEGAL",
+        "SPAM",
+        "SCAM",
+        "PHISHING",
+        "MALWARE",
+        "HARASSMENT",
+        "IMPERSONATION",
+        "OTHER",
+      ]),
+    })
+    .optional(),
+  banInfo: z
+    .object({
+      wabaBanState: z.enum(["SCHEDULE_FOR_DISABLE", "DISABLE", "REINSTATE"]),
+      wabaBanDate: z.string().optional(),
+    })
+    .optional(),
+  wabaInfo: z
+    .object({
+      wabaId: z.string(),
+      ownerBusinessId: z.string(),
+      adAccountLinked: z.string().optional(),
+      partnerAppId: z.string().optional(),
+      solutionId: z.string().optional(),
+      solutionPartnerBusinessIds: z.array(z.string()).optional(),
+    })
+    .optional(),
+  authInternationalRateEligibility: z
+    .object({
       startTime: z.number(),
-    })).optional(),
-  }).optional(),
-  partnerClientCertificationInfo: z.object({
-    clientBusinessId: z.string(),
-    status: z.enum(['APPROVED', 'REJECTED', 'PENDING']),
-    rejectionReasons: z.array(z.string()).optional(),
-  }).optional(),
+      exceptionCountries: z
+        .array(
+          z.object({
+            countryCode: z.string(),
+            startTime: z.number(),
+          }),
+        )
+        .optional(),
+    })
+    .optional(),
+  partnerClientCertificationInfo: z
+    .object({
+      clientBusinessId: z.string(),
+      status: z.enum(["APPROVED", "REJECTED", "PENDING"]),
+      rejectionReasons: z.array(z.string()).optional(),
+    })
+    .optional(),
   country: z.string().optional(),
-  volumeTierInfo: z.object({
-    tierUpdateTime: z.number(),
-    pricingCategory: z.string(),
-    tier: z.string(),
-    effectiveMonth: z.string(),
-    region: z.string(),
-  }).optional(),
+  volumeTierInfo: z
+    .object({
+      tierUpdateTime: z.number(),
+      pricingCategory: z.string(),
+      tier: z.string(),
+      effectiveMonth: z.string(),
+      region: z.string(),
+    })
+    .optional(),
 });
 
 // ============================================================================
@@ -189,8 +244,28 @@ export const accountUpdateWebhookValueSchema = z.object({
 // ============================================================================
 
 export const businessCapabilityUpdateWebhookValueSchema = z.object({
-  maxPhoneNumbersPerBusiness: z.enum(['TIER_10', 'TIER_50', 'TIER_100', 'TIER_200', 'TIER_500', 'UNLIMITED']).optional(),
-  maxPhoneNumbersPerWaba: z.enum(['TIER_10', 'TIER_20', 'TIER_25', 'TIER_50', 'TIER_100', 'TIER_200', 'TIER_500', 'UNLIMITED']).optional(),
+  maxPhoneNumbersPerBusiness: z
+    .enum([
+      "TIER_10",
+      "TIER_50",
+      "TIER_100",
+      "TIER_200",
+      "TIER_500",
+      "UNLIMITED",
+    ])
+    .optional(),
+  maxPhoneNumbersPerWaba: z
+    .enum([
+      "TIER_10",
+      "TIER_20",
+      "TIER_25",
+      "TIER_50",
+      "TIER_100",
+      "TIER_200",
+      "TIER_500",
+      "UNLIMITED",
+    ])
+    .optional(),
 });
 
 // ============================================================================
@@ -199,9 +274,18 @@ export const businessCapabilityUpdateWebhookValueSchema = z.object({
 
 export const phoneNumberNameUpdateWebhookValueSchema = z.object({
   displayPhoneNumber: z.string(),
-  decision: z.enum(['APPROVED', 'REJECTED']),
+  decision: z.enum(["APPROVED", "REJECTED"]),
   requestedVerifiedName: z.string(),
-  rejectionReason: z.enum(['NONE', 'DECEPTIVE', 'GENERIC', 'PROFANE', 'TRADEMARK', 'VIOLATES_NAMING_GUIDELINES']).optional(),
+  rejectionReason: z
+    .enum([
+      "NONE",
+      "DECEPTIVE",
+      "GENERIC",
+      "PROFANE",
+      "TRADEMARK",
+      "VIOLATES_NAMING_GUIDELINES",
+    ])
+    .optional(),
 });
 
 // ============================================================================
@@ -209,12 +293,18 @@ export const phoneNumberNameUpdateWebhookValueSchema = z.object({
 // ============================================================================
 
 export const messagingLimitTierSchema = z.enum([
-  'TIER_50', 'TIER_250', 'TIER_2K', 'TIER_10K', 'TIER_100K', 'TIER_NOT_SET', 'TIER_UNLIMITED',
+  "TIER_50",
+  "TIER_250",
+  "TIER_2K",
+  "TIER_10K",
+  "TIER_100K",
+  "TIER_NOT_SET",
+  "TIER_UNLIMITED",
 ]);
 
 export const phoneNumberQualityUpdateWebhookValueSchema = z.object({
   displayPhoneNumber: z.string(),
-  event: z.enum(['ONBOARDING', 'THROUGHPUT_UPGRADE']),
+  event: z.enum(["ONBOARDING", "THROUGHPUT_UPGRADE"]),
   currentLimit: messagingLimitTierSchema,
   oldLimit: messagingLimitTierSchema.optional(),
   maxDailyConversationsPerBusiness: messagingLimitTierSchema.optional(),
@@ -226,7 +316,7 @@ export const phoneNumberQualityUpdateWebhookValueSchema = z.object({
 
 export const securityWebhookValueSchema = z.object({
   displayPhoneNumber: z.string(),
-  event: z.enum(['PIN_CHANGED', 'PIN_RESET_REQUEST', 'PIN_REQUEST_SUCCESS']),
+  event: z.enum(["PIN_CHANGED", "PIN_RESET_REQUEST", "PIN_REQUEST_SUCCESS"]),
   requester: z.string().optional(),
 });
 
@@ -236,26 +326,58 @@ export const securityWebhookValueSchema = z.object({
 
 export const messageTemplateStatusUpdateWebhookValueSchema = z.object({
   event: z.enum([
-    'APPROVED', 'ARCHIVED', 'DELETED', 'DISABLED', 'FLAGGED', 'IN_APPEAL',
-    'LIMIT_EXCEEDED', 'LOCKED', 'PAUSED', 'PENDING', 'REINSTATED', 'PENDING_DELETION', 'REJECTED',
+    "APPROVED",
+    "ARCHIVED",
+    "DELETED",
+    "DISABLED",
+    "FLAGGED",
+    "IN_APPEAL",
+    "LIMIT_EXCEEDED",
+    "LOCKED",
+    "PAUSED",
+    "PENDING",
+    "REINSTATED",
+    "PENDING_DELETION",
+    "REJECTED",
   ]),
   messageTemplateId: z.number(),
   messageTemplateName: z.string(),
   messageTemplateLanguage: z.string(),
-  reason: z.enum([
-    'ABUSIVE_CONTENT', 'CATEGORY_NOT_AVAILABLE', 'INCORRECT_CATEGORY',
-    'INVALID_FORMAT', 'NONE', 'PROMOTIONAL', 'SCAM', 'TAG_CONTENT_MISMATCH',
-  ]).nullable().optional(),
-  messageTemplateCategory: z.enum(['MARKETING', 'UTILITY', 'AUTHENTICATION']).optional(),
+  reason: z
+    .enum([
+      "ABUSIVE_CONTENT",
+      "CATEGORY_NOT_AVAILABLE",
+      "INCORRECT_CATEGORY",
+      "INVALID_FORMAT",
+      "NONE",
+      "PROMOTIONAL",
+      "SCAM",
+      "TAG_CONTENT_MISMATCH",
+    ])
+    .nullable()
+    .optional(),
+  messageTemplateCategory: z
+    .enum(["MARKETING", "UTILITY", "AUTHENTICATION"])
+    .optional(),
   disableInfo: z.object({ disableDate: z.string() }).optional(),
-  otherInfo: z.object({
-    title: z.enum(['FIRST_PAUSE', 'SECOND_PAUSE', 'RATE_LIMITING_PAUSE', 'UNPAUSE', 'DISABLED']),
-    description: z.string(),
-  }).optional(),
-  rejectionInfo: z.object({
-    reason: z.string(),
-    recommendation: z.string(),
-  }).optional(),
+  otherInfo: z
+    .object({
+      title: z.enum([
+        "FIRST_PAUSE",
+        "SECOND_PAUSE",
+        "RATE_LIMITING_PAUSE",
+        "UNPAUSE",
+        "DISABLED",
+      ]),
+      description: z.string(),
+    })
+    .optional(),
+  rejectionInfo: z
+    .object({
+      reason: z.string(),
+      recommendation: z.string(),
+    })
+    .optional(),
 });
 
 // ============================================================================
@@ -263,8 +385,8 @@ export const messageTemplateStatusUpdateWebhookValueSchema = z.object({
 // ============================================================================
 
 export const messageTemplateQualityUpdateWebhookValueSchema = z.object({
-  previousQualityScore: z.enum(['GREEN', 'YELLOW', 'RED', 'UNKNOWN']),
-  newQualityScore: z.enum(['GREEN', 'YELLOW', 'RED', 'UNKNOWN']),
+  previousQualityScore: z.enum(["GREEN", "YELLOW", "RED", "UNKNOWN"]),
+  newQualityScore: z.enum(["GREEN", "YELLOW", "RED", "UNKNOWN"]),
   messageTemplateId: z.number(),
   messageTemplateName: z.string(),
   messageTemplateLanguage: z.string(),
@@ -274,11 +396,13 @@ export const messageTemplateQualityUpdateWebhookValueSchema = z.object({
 // Message Template Components Update Webhook (field: "message_template_components_update")
 // ============================================================================
 
-export const messageTemplateComponentsUpdateWebhookValueSchema = z.object({
-  messageTemplateId: z.number(),
-  messageTemplateName: z.string(),
-  messageTemplateLanguage: z.string(),
-}).passthrough();
+export const messageTemplateComponentsUpdateWebhookValueSchema = z
+  .object({
+    messageTemplateId: z.number(),
+    messageTemplateName: z.string(),
+    messageTemplateLanguage: z.string(),
+  })
+  .passthrough();
 
 // ============================================================================
 // Template Category Update Webhook (field: "template_category_update")
@@ -288,94 +412,175 @@ export const templateCategoryUpdateWebhookValueSchema = z.object({
   messageTemplateId: z.number(),
   messageTemplateName: z.string(),
   messageTemplateLanguage: z.string(),
-  previousCategory: z.enum(['MARKETING', 'UTILITY', 'AUTHENTICATION']),
-  newCategory: z.enum(['MARKETING', 'UTILITY', 'AUTHENTICATION']),
+  previousCategory: z.enum(["MARKETING", "UTILITY", "AUTHENTICATION"]),
+  newCategory: z.enum(["MARKETING", "UTILITY", "AUTHENTICATION"]),
 });
 
 // ============================================================================
 // History Webhook (field: "history")
 // ============================================================================
 
-export const historyWebhookValueSchema = z.object({
-  phoneNumberId: z.string(),
-  wabaId: z.string(),
-  eventType: z.string(),
-  eventDescription: z.string().optional(),
-}).passthrough();
+export const historyWebhookValueSchema = z
+  .object({
+    phoneNumberId: z.string(),
+    wabaId: z.string(),
+    eventType: z.string(),
+    eventDescription: z.string().optional(),
+  })
+  .passthrough();
 
 // ============================================================================
 // Partner Solutions Webhook (field: "partner_solutions")
 // ============================================================================
 
-export const partnerSolutionsWebhookValueSchema = z.object({
-  solutionId: z.string(),
-  event: z.string(),
-  wabaId: z.string().optional(),
-  phoneNumberId: z.string().optional(),
-}).passthrough();
+export const partnerSolutionsWebhookValueSchema = z
+  .object({
+    solutionId: z.string(),
+    event: z.string(),
+    wabaId: z.string().optional(),
+    phoneNumberId: z.string().optional(),
+  })
+  .passthrough();
 
 // ============================================================================
 // Payment Configuration Update Webhook (field: "payment_configuration_update")
 // ============================================================================
 
-export const paymentConfigurationUpdateWebhookValueSchema = z.object({
-  event: z.string(),
-  phoneNumberId: z.string().optional(),
-  paymentConfiguration: z.record(z.unknown()).optional(),
-}).passthrough();
+export const paymentConfigurationUpdateWebhookValueSchema = z
+  .object({
+    event: z.string(),
+    phoneNumberId: z.string().optional(),
+    paymentConfiguration: z.record(z.unknown()).optional(),
+    payment_configuration: z.record(z.unknown()).optional(),
+  })
+  .passthrough();
+
+// ============================================================================
+// Flows Webhook (field: "flows")
+// ============================================================================
+
+export const flowsWebhookValueSchema = z
+  .object({
+    event: z.string().optional(),
+    flowId: z.string().optional(),
+    flow_id: z.string().optional(),
+    status: z.string().optional(),
+  })
+  .passthrough();
 
 // ============================================================================
 // SMB App State Sync Webhook (field: "smb_app_state_sync")
 // ============================================================================
 
-export const smbAppStateSyncWebhookValueSchema = z.object({
-  event: z.string(),
-  phoneNumberId: z.string(),
-  state: z.string().optional(),
-}).passthrough();
+export const smbAppStateSyncWebhookValueSchema = z
+  .object({
+    event: z.string(),
+    phoneNumberId: z.string(),
+    state: z.string().optional(),
+  })
+  .passthrough();
 
 // ============================================================================
 // SMB Message Echoes Webhook (field: "smb_message_echoes")
 // ============================================================================
 
 export const smbMessageEchoesWebhookValueSchema = z.object({
-  messagingProduct: z.literal('whatsapp'),
+  messagingProduct: z.literal("whatsapp"),
   metadata: webhookMetadataSchema,
-  message_echoes: z.array(z.object({
-    id: z.string(),
-    from: z.string(),
-    to: z.string(),
-    timestamp: z.string(),
-    type: z.string(),
-    text: z.object({ body: z.string() }).optional(),
-    image: webhookMediaSchema.optional(),
-    video: webhookMediaSchema.optional(),
-    audio: webhookMediaSchema.optional(),
-    document: webhookMediaSchema.optional(),
-    sticker: webhookMediaSchema.optional(),
-    location: webhookLocationSchema.optional(),
-    contacts: z.array(webhookContactSchema).optional(),
-  }).passthrough()).optional(),
+  message_echoes: z
+    .array(
+      z
+        .object({
+          id: z.string(),
+          from: z.string(),
+          to: z.string(),
+          timestamp: z.string(),
+          type: z.string(),
+          text: z.object({ body: z.string() }).optional(),
+          image: webhookMediaSchema.optional(),
+          video: webhookMediaSchema.optional(),
+          audio: webhookMediaSchema.optional(),
+          document: webhookMediaSchema.optional(),
+          sticker: webhookMediaSchema.optional(),
+          location: webhookLocationSchema.optional(),
+          contacts: z.array(webhookContactSchema).optional(),
+        })
+        .passthrough(),
+    )
+    .optional(),
 });
 
 // ============================================================================
 // User Preferences Webhook (field: "user_preferences")
 // ============================================================================
 
-export const userPreferencesWebhookValueSchema = z.object({
-  waId: z.string(),
-  preferences: z.record(z.unknown()).optional(),
-}).passthrough();
+export const userPreferencesWebhookValueSchema = z
+  .object({
+    waId: z.string(),
+    preferences: z.record(z.unknown()).optional(),
+  })
+  .passthrough();
+
+// ============================================================================
+// Calls Webhook (field: "calls")
+// ============================================================================
+
+export const callsWebhookValueSchema = z
+  .object({
+    metadata: webhookMetadataSchema.optional(),
+    calls: z
+      .array(
+        z
+          .object({
+            id: z.string().optional(),
+            from: z.string().optional(),
+            to: z.string().optional(),
+            event: z.string().optional(),
+            direction: z.string().optional(),
+            timestamp: z.string().optional(),
+            duration: z.number().optional(),
+            session: z
+              .object({
+                sdp_type: z.string().optional(),
+                sdp: z.string().optional(),
+              })
+              .optional(),
+            error: z
+              .object({
+                code: z.number().optional(),
+                message: z.string().optional(),
+              })
+              .optional(),
+          })
+          .passthrough(),
+      )
+      .optional(),
+    statuses: z
+      .array(
+        z
+          .object({
+            id: z.string().optional(),
+            status: z.string().optional(),
+            recipient_id: z.string().optional(),
+            timestamp: z.string().optional(),
+          })
+          .passthrough(),
+      )
+      .optional(),
+  })
+  .passthrough();
 
 // ============================================================================
 // Automatic Events Webhook (field: "automatic_events")
 // ============================================================================
 
-export const automaticEventsWebhookValueSchema = z.object({
-  event: z.string(),
-  phoneNumberId: z.string().optional(),
-  recipientId: z.string().optional(),
-}).passthrough();
+export const automaticEventsWebhookValueSchema = z
+  .object({
+    event: z.string(),
+    phoneNumberId: z.string().optional(),
+    recipientId: z.string().optional(),
+  })
+  .passthrough();
 
 // ============================================================================
 // Webhook Change Schemas (Discriminated Union)
@@ -383,97 +588,107 @@ export const automaticEventsWebhookValueSchema = z.object({
 
 export const messagesWebhookChangeSchema = z.object({
   value: messagesWebhookValueSchema,
-  field: z.literal('messages'),
+  field: z.literal("messages"),
 });
 
 export const accountAlertsWebhookChangeSchema = z.object({
   value: accountAlertsWebhookValueSchema,
-  field: z.literal('account_alerts'),
+  field: z.literal("account_alerts"),
 });
 
 export const accountReviewUpdateWebhookChangeSchema = z.object({
   value: accountReviewUpdateWebhookValueSchema,
-  field: z.literal('account_review_update'),
+  field: z.literal("account_review_update"),
 });
 
 export const accountUpdateWebhookChangeSchema = z.object({
   value: accountUpdateWebhookValueSchema,
-  field: z.literal('account_update'),
+  field: z.literal("account_update"),
 });
 
 export const businessCapabilityUpdateWebhookChangeSchema = z.object({
   value: businessCapabilityUpdateWebhookValueSchema,
-  field: z.literal('business_capability_update'),
+  field: z.literal("business_capability_update"),
 });
 
 export const phoneNumberNameUpdateWebhookChangeSchema = z.object({
   value: phoneNumberNameUpdateWebhookValueSchema,
-  field: z.literal('phone_number_name_update'),
+  field: z.literal("phone_number_name_update"),
 });
 
 export const phoneNumberQualityUpdateWebhookChangeSchema = z.object({
   value: phoneNumberQualityUpdateWebhookValueSchema,
-  field: z.literal('phone_number_quality_update'),
+  field: z.literal("phone_number_quality_update"),
 });
 
 export const securityWebhookChangeSchema = z.object({
   value: securityWebhookValueSchema,
-  field: z.literal('security'),
+  field: z.literal("security"),
 });
 
 export const messageTemplateStatusUpdateWebhookChangeSchema = z.object({
   value: messageTemplateStatusUpdateWebhookValueSchema,
-  field: z.literal('message_template_status_update'),
+  field: z.literal("message_template_status_update"),
 });
 
 export const messageTemplateQualityUpdateWebhookChangeSchema = z.object({
   value: messageTemplateQualityUpdateWebhookValueSchema,
-  field: z.literal('message_template_quality_update'),
+  field: z.literal("message_template_quality_update"),
 });
 
 export const messageTemplateComponentsUpdateWebhookChangeSchema = z.object({
   value: messageTemplateComponentsUpdateWebhookValueSchema,
-  field: z.literal('message_template_components_update'),
+  field: z.literal("message_template_components_update"),
 });
 
 export const templateCategoryUpdateWebhookChangeSchema = z.object({
   value: templateCategoryUpdateWebhookValueSchema,
-  field: z.literal('template_category_update'),
+  field: z.literal("template_category_update"),
 });
 
 export const historyWebhookChangeSchema = z.object({
   value: historyWebhookValueSchema,
-  field: z.literal('history'),
+  field: z.literal("history"),
 });
 
 export const partnerSolutionsWebhookChangeSchema = z.object({
   value: partnerSolutionsWebhookValueSchema,
-  field: z.literal('partner_solutions'),
+  field: z.literal("partner_solutions"),
 });
 
 export const paymentConfigurationUpdateWebhookChangeSchema = z.object({
   value: paymentConfigurationUpdateWebhookValueSchema,
-  field: z.literal('payment_configuration_update'),
+  field: z.literal("payment_configuration_update"),
+});
+
+export const flowsWebhookChangeSchema = z.object({
+  value: flowsWebhookValueSchema,
+  field: z.literal("flows"),
 });
 
 export const smbAppStateSyncWebhookChangeSchema = z.object({
   value: smbAppStateSyncWebhookValueSchema,
-  field: z.literal('smb_app_state_sync'),
+  field: z.literal("smb_app_state_sync"),
 });
 
 export const smbMessageEchoesWebhookChangeSchema = z.object({
   value: smbMessageEchoesWebhookValueSchema,
-  field: z.literal('smb_message_echoes'),
+  field: z.literal("smb_message_echoes"),
 });
 
 export const userPreferencesWebhookChangeSchema = z.object({
   value: userPreferencesWebhookValueSchema,
-  field: z.literal('user_preferences'),
+  field: z.literal("user_preferences"),
+});
+
+export const callsWebhookChangeSchema = z.object({
+  value: callsWebhookValueSchema,
+  field: z.literal("calls"),
 });
 
 export const automaticEventsWebhookChangeSchema = z.object({
   value: automaticEventsWebhookValueSchema,
-  field: z.literal('automatic_events'),
+  field: z.literal("automatic_events"),
 });
 
 // Fallback for unknown field types
@@ -499,9 +714,11 @@ export const webhookChangeSchema = z.union([
   historyWebhookChangeSchema,
   partnerSolutionsWebhookChangeSchema,
   paymentConfigurationUpdateWebhookChangeSchema,
+  flowsWebhookChangeSchema,
   smbAppStateSyncWebhookChangeSchema,
   smbMessageEchoesWebhookChangeSchema,
   userPreferencesWebhookChangeSchema,
+  callsWebhookChangeSchema,
   automaticEventsWebhookChangeSchema,
   unknownWebhookChangeSchema,
 ]);
@@ -517,7 +734,7 @@ export const webhookEntrySchema = z.object({
 });
 
 export const webhookEventSchema = z.object({
-  object: z.literal('whatsapp_business_account'),
+  object: z.literal("whatsapp_business_account"),
   entry: z.array(webhookEntrySchema),
 });
 
@@ -527,36 +744,48 @@ export const webhookEventSchema = z.object({
 
 /** @deprecated Use webhookEventSchema instead */
 export const messageWebhookEventSchema = z.object({
-  object: z.literal('whatsapp_business_account'),
-  entry: z.array(z.object({
-    id: z.string(),
-    changes: z.array(z.object({
-      value: messagesWebhookValueSchema,
-      field: z.literal('messages'),
-    })),
-  })),
+  object: z.literal("whatsapp_business_account"),
+  entry: z.array(
+    z.object({
+      id: z.string(),
+      changes: z.array(
+        z.object({
+          value: messagesWebhookValueSchema,
+          field: z.literal("messages"),
+        }),
+      ),
+    }),
+  ),
 });
 
 /** @deprecated Use webhookEventSchema instead */
 export const statusWebhookEventSchema = z.object({
-  object: z.literal('whatsapp_business_account'),
-  entry: z.array(z.object({
-    id: z.string(),
-    changes: z.array(z.object({
-      value: messagesWebhookValueSchema,
-      field: z.literal('messages'),
-    })),
-  })),
+  object: z.literal("whatsapp_business_account"),
+  entry: z.array(
+    z.object({
+      id: z.string(),
+      changes: z.array(
+        z.object({
+          value: messagesWebhookValueSchema,
+          field: z.literal("messages"),
+        }),
+      ),
+    }),
+  ),
 });
 
 /** @deprecated Use webhookEventSchema instead */
 export const accountWebhookEventSchema = z.object({
-  object: z.literal('whatsapp_business_account'),
-  entry: z.array(z.object({
-    id: z.string(),
-    changes: z.array(z.object({
-      value: z.object({ event: z.string() }).passthrough(),
-      field: z.string(),
-    })),
-  })),
+  object: z.literal("whatsapp_business_account"),
+  entry: z.array(
+    z.object({
+      id: z.string(),
+      changes: z.array(
+        z.object({
+          value: z.object({ event: z.string() }).passthrough(),
+          field: z.string(),
+        }),
+      ),
+    }),
+  ),
 });

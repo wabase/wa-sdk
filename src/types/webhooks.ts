@@ -458,6 +458,19 @@ export interface PaymentConfigurationUpdateWebhookValue {
   event: string;
   phoneNumberId?: string;
   paymentConfiguration?: Record<string, unknown>;
+  payment_configuration?: Record<string, unknown>;
+  [key: string]: unknown;
+}
+
+// ============================================================================
+// Flows Webhook (field: "flows")
+// ============================================================================
+
+export interface FlowsWebhookValue {
+  event?: string;
+  flowId?: string;
+  flow_id?: string;
+  status?: string;
   [key: string]: unknown;
 }
 
@@ -508,6 +521,40 @@ export interface UserPreferencesWebhookValue {
 }
 
 // ============================================================================
+// Calls Webhook (field: "calls")
+// ============================================================================
+
+export interface CallsWebhookValue {
+  metadata?: WebhookMetadata;
+  calls?: Array<{
+    id?: string;
+    from?: string;
+    to?: string;
+    event?: string;
+    direction?: string;
+    timestamp?: string;
+    duration?: number;
+    session?: {
+      sdp_type?: string;
+      sdp?: string;
+    };
+    error?: {
+      code?: number;
+      message?: string;
+    };
+    [key: string]: unknown;
+  }>;
+  statuses?: Array<{
+    id?: string;
+    status?: string;
+    recipient_id?: string;
+    timestamp?: string;
+    [key: string]: unknown;
+  }>;
+  [key: string]: unknown;
+}
+
+// ============================================================================
 // Automatic Events Webhook (field: "automatic_events")
 // ============================================================================
 
@@ -535,12 +582,14 @@ export type WebhookField =
   | "message_template_quality_update"
   | "message_template_components_update"
   | "template_category_update"
+  | "flows"
   | "history"
   | "partner_solutions"
   | "payment_configuration_update"
   | "smb_app_state_sync"
   | "smb_message_echoes"
   | "user_preferences"
+  | "calls"
   | "automatic_events";
 
 // ============================================================================
@@ -622,6 +671,11 @@ export interface PaymentConfigurationUpdateWebhookChange {
   field: "payment_configuration_update";
 }
 
+export interface FlowsWebhookChange {
+  value: FlowsWebhookValue;
+  field: "flows";
+}
+
 export interface SmbAppStateSyncWebhookChange {
   value: SmbAppStateSyncWebhookValue;
   field: "smb_app_state_sync";
@@ -635,6 +689,11 @@ export interface SmbMessageEchoesWebhookChange {
 export interface UserPreferencesWebhookChange {
   value: UserPreferencesWebhookValue;
   field: "user_preferences";
+}
+
+export interface CallsWebhookChange {
+  value: CallsWebhookValue;
+  field: "calls";
 }
 
 export interface AutomaticEventsWebhookChange {
@@ -658,9 +717,11 @@ export type WebhookChange =
   | HistoryWebhookChange
   | PartnerSolutionsWebhookChange
   | PaymentConfigurationUpdateWebhookChange
+  | FlowsWebhookChange
   | SmbAppStateSyncWebhookChange
   | SmbMessageEchoesWebhookChange
   | UserPreferencesWebhookChange
+  | CallsWebhookChange
   | AutomaticEventsWebhookChange;
 
 // ============================================================================

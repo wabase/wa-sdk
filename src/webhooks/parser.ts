@@ -27,34 +27,36 @@ import type {
   SmbMessageEchoesWebhookValue,
   UserPreferencesWebhookValue,
   AutomaticEventsWebhookValue,
-} from '../types/webhooks.js';
-import type { Validator } from '../validation/validator.js';
-import { webhookEventSchema } from '../validation/schemas/webhooks.js';
-import { ValidationError } from '../types/errors.js';
+} from "../types/webhooks.js";
+import type { Validator } from "../validation/validator.js";
+import { webhookEventSchema } from "../validation/schemas/webhooks.js";
+import { ValidationError } from "../types/errors.js";
 
 /**
  * All supported webhook field types
  */
 export const WEBHOOK_FIELDS: WebhookField[] = [
-  'messages',
-  'account_alerts',
-  'account_review_update',
-  'account_update',
-  'business_capability_update',
-  'phone_number_name_update',
-  'phone_number_quality_update',
-  'security',
-  'message_template_status_update',
-  'message_template_quality_update',
-  'message_template_components_update',
-  'template_category_update',
-  'history',
-  'partner_solutions',
-  'payment_configuration_update',
-  'smb_app_state_sync',
-  'smb_message_echoes',
-  'user_preferences',
-  'automatic_events',
+  "messages",
+  "account_alerts",
+  "account_review_update",
+  "account_update",
+  "business_capability_update",
+  "phone_number_name_update",
+  "phone_number_quality_update",
+  "security",
+  "message_template_status_update",
+  "message_template_quality_update",
+  "message_template_components_update",
+  "template_category_update",
+  "flows",
+  "history",
+  "partner_solutions",
+  "payment_configuration_update",
+  "smb_app_state_sync",
+  "smb_message_echoes",
+  "user_preferences",
+  "calls",
+  "automatic_events",
 ];
 
 /**
@@ -65,9 +67,12 @@ export const WEBHOOK_FIELDS: WebhookField[] = [
  * @returns Parsed webhook event
  * @throws ValidationError if payload is invalid
  */
-export function parseWebhook(payload: unknown, validator?: Validator): WebhookEvent {
-  if (!payload || typeof payload !== 'object') {
-    throw new ValidationError('Webhook payload must be an object', 'payload');
+export function parseWebhook(
+  payload: unknown,
+  validator?: Validator,
+): WebhookEvent {
+  if (!payload || typeof payload !== "object") {
+    throw new ValidationError("Webhook payload must be an object", "payload");
   }
 
   if (validator) {
@@ -77,15 +82,18 @@ export function parseWebhook(payload: unknown, validator?: Validator): WebhookEv
 
   const data = payload as Record<string, unknown>;
 
-  if (data.object !== 'whatsapp_business_account') {
+  if (data.object !== "whatsapp_business_account") {
     throw new ValidationError(
       'Invalid webhook object type. Expected "whatsapp_business_account"',
-      'object'
+      "object",
     );
   }
 
   if (!Array.isArray(data.entry)) {
-    throw new ValidationError('Webhook payload must have an "entry" array', 'entry');
+    throw new ValidationError(
+      'Webhook payload must have an "entry" array',
+      "entry",
+    );
   }
 
   // Use double assertion since we've validated the structure above
@@ -97,7 +105,7 @@ export function parseWebhook(payload: unknown, validator?: Validator): WebhookEv
  */
 export function getChangesByField<T extends WebhookField>(
   event: WebhookEvent,
-  field: T
+  field: T,
 ): WebhookChangeResult<T> {
   const results: WebhookChangeResult<T> = [];
 
@@ -151,7 +159,7 @@ export function getFields(event: WebhookEvent): WebhookField[] {
  * Get messages from a webhook event (convenience helper)
  */
 export function getMessages(event: WebhookEvent): WebhookMessage[] {
-  const changes = getChangesByField(event, 'messages');
+  const changes = getChangesByField(event, "messages");
   return changes.flatMap((c) => c.value.messages || []);
 }
 
@@ -159,7 +167,7 @@ export function getMessages(event: WebhookEvent): WebhookMessage[] {
  * Get statuses from a webhook event (convenience helper)
  */
 export function getStatuses(event: WebhookEvent): WebhookStatus[] {
-  const changes = getChangesByField(event, 'messages');
+  const changes = getChangesByField(event, "messages");
   return changes.flatMap((c) => c.value.statuses || []);
 }
 
@@ -167,131 +175,139 @@ export function getStatuses(event: WebhookEvent): WebhookStatus[] {
  * Get reaction messages from a webhook event
  */
 export function getReactions(event: WebhookEvent): WebhookMessage[] {
-  return getMessages(event).filter((message) => message.type === 'reaction');
+  return getMessages(event).filter((message) => message.type === "reaction");
 }
 
 /**
  * Get account alerts from a webhook event
  */
-export function getAccountAlerts(event: WebhookEvent): WebhookChangeResult<'account_alerts'> {
-  return getChangesByField(event, 'account_alerts');
+export function getAccountAlerts(
+  event: WebhookEvent,
+): WebhookChangeResult<"account_alerts"> {
+  return getChangesByField(event, "account_alerts");
 }
 
 /**
  * Get account review updates from a webhook event
  */
 export function getAccountReviewUpdates(
-  event: WebhookEvent
-): WebhookChangeResult<'account_review_update'> {
-  return getChangesByField(event, 'account_review_update');
+  event: WebhookEvent,
+): WebhookChangeResult<"account_review_update"> {
+  return getChangesByField(event, "account_review_update");
 }
 
 /**
  * Get account updates from a webhook event
  */
-export function getAccountUpdates(event: WebhookEvent): WebhookChangeResult<'account_update'> {
-  return getChangesByField(event, 'account_update');
+export function getAccountUpdates(
+  event: WebhookEvent,
+): WebhookChangeResult<"account_update"> {
+  return getChangesByField(event, "account_update");
 }
 
 /**
  * Get business capability updates from a webhook event
  */
 export function getBusinessCapabilityUpdates(
-  event: WebhookEvent
-): WebhookChangeResult<'business_capability_update'> {
-  return getChangesByField(event, 'business_capability_update');
+  event: WebhookEvent,
+): WebhookChangeResult<"business_capability_update"> {
+  return getChangesByField(event, "business_capability_update");
 }
 
 /**
  * Get phone number name updates from a webhook event
  */
 export function getPhoneNumberNameUpdates(
-  event: WebhookEvent
-): WebhookChangeResult<'phone_number_name_update'> {
-  return getChangesByField(event, 'phone_number_name_update');
+  event: WebhookEvent,
+): WebhookChangeResult<"phone_number_name_update"> {
+  return getChangesByField(event, "phone_number_name_update");
 }
 
 /**
  * Get template status updates from a webhook event
  */
 export function getTemplateStatusUpdates(
-  event: WebhookEvent
-): WebhookChangeResult<'message_template_status_update'> {
-  return getChangesByField(event, 'message_template_status_update');
+  event: WebhookEvent,
+): WebhookChangeResult<"message_template_status_update"> {
+  return getChangesByField(event, "message_template_status_update");
 }
 
 /**
  * Get template quality updates from a webhook event
  */
 export function getTemplateQualityUpdates(
-  event: WebhookEvent
-): WebhookChangeResult<'message_template_quality_update'> {
-  return getChangesByField(event, 'message_template_quality_update');
+  event: WebhookEvent,
+): WebhookChangeResult<"message_template_quality_update"> {
+  return getChangesByField(event, "message_template_quality_update");
 }
 
 /**
  * Get security events from a webhook event
  */
-export function getSecurityEvents(event: WebhookEvent): WebhookChangeResult<'security'> {
-  return getChangesByField(event, 'security');
+export function getSecurityEvents(
+  event: WebhookEvent,
+): WebhookChangeResult<"security"> {
+  return getChangesByField(event, "security");
 }
 
 /**
  * Get phone number quality updates from a webhook event
  */
 export function getPhoneNumberQualityUpdates(
-  event: WebhookEvent
-): WebhookChangeResult<'phone_number_quality_update'> {
-  return getChangesByField(event, 'phone_number_quality_update');
+  event: WebhookEvent,
+): WebhookChangeResult<"phone_number_quality_update"> {
+  return getChangesByField(event, "phone_number_quality_update");
 }
 
 /**
  * Get user preference updates from a webhook event
  */
-export function getUserPreferences(event: WebhookEvent): WebhookChangeResult<'user_preferences'> {
-  return getChangesByField(event, 'user_preferences');
+export function getUserPreferences(
+  event: WebhookEvent,
+): WebhookChangeResult<"user_preferences"> {
+  return getChangesByField(event, "user_preferences");
 }
 
 /**
  * Type mapping for webhook field values
  */
-type WebhookValueType<T extends WebhookField> = T extends 'messages'
+type WebhookValueType<T extends WebhookField> = T extends "messages"
   ? MessagesWebhookValue
-  : T extends 'account_alerts'
+  : T extends "account_alerts"
     ? AccountAlertsWebhookValue
-    : T extends 'account_review_update'
+    : T extends "account_review_update"
       ? AccountReviewUpdateWebhookValue
-      : T extends 'account_update'
+      : T extends "account_update"
         ? AccountUpdateWebhookValue
-        : T extends 'business_capability_update'
+        : T extends "business_capability_update"
           ? BusinessCapabilityUpdateWebhookValue
-          : T extends 'phone_number_name_update'
+          : T extends "phone_number_name_update"
             ? PhoneNumberNameUpdateWebhookValue
-            : T extends 'phone_number_quality_update'
+            : T extends "phone_number_quality_update"
               ? PhoneNumberQualityUpdateWebhookValue
-              : T extends 'security'
+              : T extends "security"
                 ? SecurityWebhookValue
-                : T extends 'message_template_status_update'
+                : T extends "message_template_status_update"
                   ? MessageTemplateStatusUpdateWebhookValue
-                  : T extends 'message_template_quality_update'
+                  : T extends "message_template_quality_update"
                     ? MessageTemplateQualityUpdateWebhookValue
-                    : T extends 'message_template_components_update'
+                    : T extends "message_template_components_update"
                       ? MessageTemplateComponentsUpdateWebhookValue
-                      : T extends 'template_category_update'
+                      : T extends "template_category_update"
                         ? TemplateCategoryUpdateWebhookValue
-                        : T extends 'history'
+                        : T extends "history"
                           ? HistoryWebhookValue
-                          : T extends 'partner_solutions'
+                          : T extends "partner_solutions"
                             ? PartnerSolutionsWebhookValue
-                            : T extends 'payment_configuration_update'
+                            : T extends "payment_configuration_update"
                               ? PaymentConfigurationUpdateWebhookValue
-                              : T extends 'smb_app_state_sync'
+                              : T extends "smb_app_state_sync"
                                 ? SmbAppStateSyncWebhookValue
-                                : T extends 'smb_message_echoes'
+                                : T extends "smb_message_echoes"
                                   ? SmbMessageEchoesWebhookValue
-                                  : T extends 'user_preferences'
+                                  : T extends "user_preferences"
                                     ? UserPreferencesWebhookValue
-                                    : T extends 'automatic_events'
+                                    : T extends "automatic_events"
                                       ? AutomaticEventsWebhookValue
                                       : never;
 
